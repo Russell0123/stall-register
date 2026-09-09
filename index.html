@@ -1,0 +1,1406 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f7a58">
+<meta name="color-scheme" content="light">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="攤位收銀台">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>攤位收銀台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    color-scheme:light;
+    --bg:#f5f5f0;
+    --surface:#ffffff;
+    --surface-2:#f4f3ee;
+    --ink:#1e2126;
+    --muted:#6b7078;
+    --faint:#9aa0a8;
+    --line:#e4e3db;
+    --line-strong:#d3d2c8;
+    --accent:#0f7a58;
+    --accent-on:#ffffff;
+    --accent-weak:#e6efe9;
+    --accent-weak:color-mix(in srgb, var(--accent) 12%, var(--surface));
+    --accent-ink:#0b5a41;
+    --accent-ink:color-mix(in srgb, var(--accent) 70%, var(--ink));
+    --warn:#a86a15;
+    --warn-weak:#f6ecd9;
+    --danger:#b23b2e;
+    --danger-weak:#f6e4e1;
+    --shadow:0 1px 2px rgba(30,33,38,.06), 0 8px 24px -14px rgba(30,33,38,.16);
+    --radius:14px;
+    --ff-sans:"IBM Plex Sans","PingFang TC","Noto Sans TC","Microsoft JhengHei",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --ff-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+
+  *{box-sizing:border-box}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--ff-sans);font-size:15px;line-height:1.5;
+    -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;
+  }
+  button{font-family:inherit;color:inherit}
+  h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.01em}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:5px}
+  .app{max-width:860px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    appearance:none;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);
+    padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;
+    transition:background .12s,border-color .12s,transform .04s;
+  }
+  .btn:hover{background:var(--surface-2)}
+  .btn:active{transform:translateY(1px)}
+  .btn--primary{background:var(--accent);border-color:var(--accent);color:var(--accent-on)}
+  .btn--primary:hover{background:var(--accent);filter:brightness(.94)}
+  .btn--ghost{border-color:transparent;background:transparent;color:var(--muted)}
+  .btn--ghost:hover{background:var(--surface-2);color:var(--ink)}
+  .btn--danger{color:var(--danger);border-color:transparent;background:transparent}
+  .btn--danger:hover{background:var(--danger-weak)}
+  .btn--dangerFill{background:var(--danger);border-color:var(--danger);color:#fff}
+  .btn--dangerFill:hover{filter:brightness(.94)}
+  .btn--block{width:100%}
+  .btn--sm{padding:7px 12px;font-size:13px;min-height:36px;border-radius:9px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .label{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+  .mono{font-family:var(--ff-mono);font-variant-numeric:tabular-nums}
+  .money{font-family:var(--ff-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+  .empty{
+    border:1px dashed var(--line-strong);border-radius:var(--radius);padding:32px 20px;text-align:center;
+    color:var(--muted);background:var(--surface-2);
+  }
+  .empty h3{color:var(--ink);font-size:15px;margin-bottom:5px}
+
+  /* ---------- home ---------- */
+  .home{padding:16px 16px 60px}
+  .home-banner{
+    position:relative;width:100%;aspect-ratio:16/6;min-height:120px;max-height:220px;
+    border-radius:16px;overflow:hidden;background:var(--accent);cursor:pointer;
+    display:flex;align-items:flex-end;border:1px solid var(--line);box-shadow:var(--shadow);margin-bottom:14px
+  }
+  .home-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .home-banner__pal{
+    position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:12px;border:0;cursor:pointer;z-index:2;
+    background:rgba(255,255,255,.92);color:#1e2126;font-size:19px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.18)
+  }
+  .home-banner__hint{position:relative;z-index:1;color:var(--accent-on);opacity:.9;font-size:12.5px;font-weight:600;padding:11px 13px}
+  .newstall-btn{width:100%;min-height:60px;font-size:16px;margin-bottom:16px}
+
+  /* ---------- tile grid (home stalls + checkout items) ---------- */
+  .tile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media (min-width:600px){.tile-grid{grid-template-columns:repeat(3,1fr)}}
+  .tile{
+    position:relative;aspect-ratio:1/1;border-radius:14px;overflow:hidden;
+    border:1px solid var(--line);background:var(--surface-2);cursor:pointer;
+    display:flex;flex-direction:column;justify-content:flex-end;box-shadow:var(--shadow);
+    text-align:left;padding:0;font:inherit;color:inherit;
+  }
+  .tile__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .tile__ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--faint)}
+  .tile__cap{position:relative;background:var(--surface);border-top:1px solid var(--line);padding:9px 11px}
+  .tile__nm{font-weight:650;font-size:13px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile__meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+  .tile__meta .mo{font-family:var(--ff-mono);color:var(--ink)}
+  .tile.is-out{opacity:.5;filter:grayscale(.85);pointer-events:none}
+  .tile__badge{
+    position:absolute;top:7px;left:7px;font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:999px;
+    background:rgba(20,22,26,.62);color:#fff;backdrop-filter:blur(2px)
+  }
+  .tile__badge.low{background:var(--warn)}
+  .tile__badge.out{background:var(--danger)}
+  .tile__del{
+    position:absolute;top:6px;right:6px;width:29px;height:29px;border-radius:9px;border:0;cursor:pointer;
+    background:rgba(20,22,26,.5);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center
+  }
+  .tile__del:hover{background:var(--danger)}
+  .tile--new{
+    align-items:center;justify-content:center;gap:6px;flex-direction:column;
+    border:1.5px dashed var(--line-strong);background:transparent;color:var(--muted);font-weight:650;font-size:13.5px
+  }
+  .tile--new span{font-size:26px;line-height:1}
+  .tile--new:hover{border-color:var(--accent);color:var(--accent-ink)}
+
+  /* ---------- stall shell ---------- */
+  .stall{display:flex;flex-direction:column;flex:1;min-height:100%}
+  .stall__top{position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 14px 0;border-bottom:1px solid var(--line)}
+  .stall__bar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .stall__title{
+    flex:1;min-width:0;font-size:15.5px;font-weight:700;background:transparent;border:0;cursor:pointer;
+    display:flex;align-items:center;gap:7px;padding:6px 4px;border-radius:8px;text-align:left
+  }
+  .stall__title:hover{background:var(--surface-2)}
+  .stall__title .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stall__title .pen{font-size:12px;color:var(--faint);flex-shrink:0}
+  .stall__title small{display:block;font-size:10.5px;font-weight:500;color:var(--faint)}
+  .tabs{display:flex;gap:2px}
+  .tab{
+    appearance:none;border:0;background:transparent;cursor:pointer;flex:1;
+    padding:11px 8px 12px;font-size:14px;font-weight:600;color:var(--muted);
+    border-bottom:2px solid transparent;margin-bottom:-1px
+  }
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--accent-ink);border-color:var(--accent)}
+  .tab--primary{color:var(--accent-ink);background:var(--accent-weak);border-radius:9px 9px 0 0}
+  .tab--primary[aria-selected="true"]{background:var(--accent);color:var(--accent-on)}
+  .stall__body{flex:1;padding:18px 14px 40px}
+
+  .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 12px}
+  .section-head:first-child{margin-top:0}
+  .section-head h2{font-size:15px;font-weight:700}
+
+  /* ---------- product / bundle admin list ---------- */
+  .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px}
+  .item{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:var(--shadow)}
+  .thumb{
+    width:54px;height:54px;border-radius:9px;flex-shrink:0;object-fit:cover;background:var(--surface-2);
+    border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:20px
+  }
+  .item__body{flex:1;min-width:0}
+  .item__name{font-weight:650;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item__sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .item__price{font-family:var(--ff-mono);font-weight:600;margin-top:4px;font-size:13.5px}
+  .item__price s{color:var(--faint);font-weight:500;margin-left:5px}
+  .item__actions{display:flex;flex-direction:column;gap:5px;justify-content:center}
+  .chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+  .chip--low{background:var(--warn-weak);color:var(--warn);border-color:transparent}
+  .chip--out{background:var(--danger-weak);color:var(--danger);border-color:transparent}
+  .vlines{margin-top:7px;display:flex;flex-direction:column;gap:3px}
+  .vlines div{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+  .vlines .mono{color:var(--ink)}
+
+  /* ---------- cart ---------- */
+  .cart{margin-top:18px}
+  .cart__h{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between}
+  .cart-line{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+  .cart-line:last-child{border-bottom:1px solid var(--line)}
+  .cart-line.bad{opacity:.55}
+  .cart-line__b{flex:1;min-width:0}
+  .cart-line__nm{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cart-line__d{font-size:11.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cart-line__sub{font-family:var(--ff-mono);font-weight:600;font-size:13px;min-width:58px;text-align:right}
+  .cart-line__x{border:0;background:transparent;color:var(--faint);cursor:pointer;font-size:15px;padding:4px}
+  .cart-line__x:hover{color:var(--danger)}
+
+  .stepper{display:flex;align-items:center;gap:3px;flex-shrink:0}
+  .stepper button{
+    width:34px;height:34px;border-radius:9px;border:1px solid var(--line-strong);background:var(--surface);
+    font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1
+  }
+  .stepper button:hover:not(:disabled){background:var(--surface-2)}
+  .stepper button:disabled{opacity:.35;cursor:not-allowed}
+  .stepper .q{min-width:30px;text-align:center;font-family:var(--ff-mono);font-weight:600;font-size:15px}
+
+  .checkout-foot{
+    position:sticky;bottom:0;z-index:15;margin:20px -14px -40px;
+    padding:13px 14px calc(13px + env(safe-area-inset-bottom));
+    background:var(--surface);border-top:1px solid var(--line-strong);
+    display:flex;align-items:center;gap:12px;box-shadow:0 -6px 20px -16px rgba(0,0,0,.35)
+  }
+  .checkout-foot__s{flex:1;min-width:0}
+  .checkout-foot__s .label{display:block;margin-bottom:1px}
+  .checkout-foot__t{font-family:var(--ff-mono);font-size:21px;font-weight:700;letter-spacing:-.02em}
+  .checkout-foot__c{font-size:11.5px;color:var(--muted)}
+
+  .free-toggle{
+    display:flex;align-items:center;gap:11px;padding:13px 14px;border:1px solid var(--line-strong);
+    border-radius:12px;background:var(--surface);cursor:pointer;margin:14px 0
+  }
+  .free-toggle input{width:20px;height:20px;accent-color:var(--accent);flex-shrink:0}
+  .free-toggle b{font-size:14px}
+  .free-toggle small{display:block;color:var(--muted);font-size:11.5px;font-weight:400;margin-top:1px}
+  .free-toggle.on{border-color:var(--accent);background:var(--accent-weak)}
+
+  /* ---------- settle ---------- */
+  .hero-income{background:var(--accent);color:var(--accent-on);border-radius:var(--radius);padding:19px 20px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .hero-income .label{color:var(--accent-on);opacity:.82}
+  .hero-income .amt{font-family:var(--ff-mono);font-size:36px;font-weight:700;letter-spacing:-.02em;margin-top:4px;line-height:1}
+  .hero-income .sub{font-size:12px;color:var(--accent-on);opacity:.86;margin-top:7px}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .stat__nm{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stat__big{font-family:var(--ff-mono);font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:5px;line-height:1}
+  .stat__big .cur{color:var(--ink)} .stat__big .sep{color:var(--faint);margin:0 3px;font-weight:400} .stat__big .ini{color:var(--faint)}
+  .stat.is-out .stat__big .cur{color:var(--danger)}
+  .stat__bar{height:5px;border-radius:3px;background:var(--surface-2);margin-top:9px;overflow:hidden}
+  .stat__bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 15px 17px;box-shadow:var(--shadow);margin-top:16px}
+  .panel__title{font-size:14px;font-weight:700;margin-bottom:12px}
+  .chart{width:100%;overflow-x:auto}
+  .chart svg{display:block;min-width:420px;width:100%;height:auto}
+  .ck-grid{stroke:var(--line);stroke-width:1}
+  .ck-axis{fill:var(--faint);font-size:11px;font-family:var(--ff-mono)}
+  .ck-name{fill:var(--muted);font-size:12px}
+  .ck-val{fill:var(--ink);font-size:11px;font-family:var(--ff-mono);font-weight:600}
+  .ck-sold{fill:var(--accent)} .ck-remain{fill:var(--accent-weak)}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+  .filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  input[type=date],input[type=text],input[type=number],select{
+    font-family:inherit;font-size:16px;padding:9px 10px;border-radius:9px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--ink);width:100%
+  }
+  input[type=date]{width:auto}
+  .orders{display:flex;flex-direction:column;gap:8px}
+  .order{border:1px solid var(--line);border-radius:11px;background:var(--surface-2);overflow:hidden}
+  .order__head{display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer;width:100%;background:transparent;border:0;text-align:left}
+  .order__head:hover{background:var(--surface)}
+  .order__time{font-size:12px;color:var(--muted);font-family:var(--ff-mono)}
+  .order__cnt{font-size:11.5px;color:var(--faint);margin-left:auto}
+  .order__total{font-family:var(--ff-mono);font-weight:700;font-size:14px}
+  .order__total s{color:var(--faint);font-weight:400;font-size:11px;margin-right:5px}
+  .free-tag{font-size:10px;font-weight:700;color:var(--accent-on);background:var(--accent);padding:2px 6px;border-radius:999px}
+  .order__lines{padding:2px 12px 12px;display:none;flex-direction:column;gap:5px}
+  .order.open .order__lines{display:flex}
+  .order__line{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;color:var(--muted)}
+  .order__line b{color:var(--ink);font-weight:600}
+  .order__line .lm{font-family:var(--ff-mono);color:var(--ink);flex-shrink:0}
+
+  /* ---------- modal / sheet ---------- */
+  dialog#modal{
+    border:0;padding:0;border-radius:16px;max-width:520px;width:calc(100% - 28px);
+    background:var(--surface);color:var(--ink);box-shadow:0 24px 70px -18px rgba(0,0,0,.5)
+  }
+  dialog#modal::backdrop{background:rgba(20,22,26,.5)}
+  @media (max-width:560px){
+    dialog#modal{width:100%;max-width:none;margin:0 0 0 0;align-self:stretch;
+      position:fixed;left:0;right:0;bottom:0;top:auto;border-radius:18px 18px 0 0}
+  }
+  .m-head{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid var(--line)}
+  .m-head h3{font-size:16px;font-weight:700}
+  .m-body{padding:15px 16px;max-height:64vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .m-foot{display:flex;gap:8px;justify-content:flex-end;padding:13px 16px;border-top:1px solid var(--line)}
+  .confirm-msg{margin:2px 0 0;line-height:1.65}
+  .field{margin-bottom:14px}
+  .field>label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+  .field-row{display:flex;gap:10px}.field-row .field{flex:1}
+  .hint{font-size:11.5px;color:var(--faint);margin-top:4px}
+  .lock-note{background:var(--warn-weak);color:var(--warn);font-size:12px;font-weight:600;padding:9px 11px;border-radius:9px;margin-bottom:14px}
+  .img-drop{display:flex;align-items:center;gap:12px;border:1px dashed var(--line-strong);border-radius:11px;padding:10px;cursor:pointer;width:100%;background:var(--surface);font:inherit;color:inherit;text-align:left}
+  .img-drop:hover{background:var(--surface-2)}
+  .img-drop img,.img-drop .ph{width:46px;height:46px;border-radius:8px;object-fit:cover;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--faint);flex-shrink:0}
+  .img-drop span{font-size:12.5px;color:var(--muted)}
+  .spec-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start}
+  .spec-row .field{margin:0}.spec-row .k{width:34%}.spec-row .v{flex:1}
+  .vtable{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:4px}
+  .vrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-top:1px solid var(--line)}
+  .vrow:first-child{border-top:0;background:var(--surface-2)}
+  .vrow .vn{flex:1;font-size:13px;font-weight:600;min-width:0}
+  .vrow .hh{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .vrow input{width:72px}
+  .vrow .hh.w{width:72px;text-align:center}
+  .vimg-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .vimg{display:flex;align-items:center;gap:10px;font-size:12.5px}
+  .vimg img,.vimg .ph{width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--faint);flex-shrink:0}
+  .comp-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+  .comp-row:first-child{border-top:0}
+  .comp-row__nm{flex:1;font-size:13.5px;min-width:0}
+  .comp-row__nm small{display:block;color:var(--faint);font-size:11px}
+  .comp-row input{width:64px}
+  .err{color:var(--danger);font-size:12.5px;margin-top:8px;display:none}
+  .err.show{display:block}
+
+  /* add-to-cart sheet */
+  .sheet-hero{display:flex;gap:12px;margin-bottom:14px}
+  .sheet-hero img,.sheet-hero .ph{width:76px;height:76px;border-radius:11px;object-fit:cover;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--faint);flex-shrink:0}
+  .sheet-hero .nm{font-weight:700;font-size:15px}
+  .sheet-hero .pr{font-family:var(--ff-mono);font-weight:600;margin-top:3px}
+  .sheet-hero .st{font-size:12px;color:var(--muted);margin-top:3px}
+  .sel-group{margin-bottom:12px}
+  .sel-group>label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+  .qty-pick{display:flex;align-items:center;justify-content:space-between;margin:14px 0 4px}
+  .qty-pick .label{font-size:12px}
+
+  /* settings swatches */
+  .swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .swatch{
+    display:flex;flex-direction:column;align-items:center;gap:6px;padding:11px 6px;border-radius:11px;
+    border:1.5px solid var(--line);background:var(--surface);cursor:pointer
+  }
+  .swatch span{width:100%;height:26px;border-radius:7px;background:var(--sw)}
+  .swatch b{font-size:11.5px;font-weight:600;color:var(--muted)}
+  .swatch.on{border-color:var(--sw)}
+  .swatch.on b{color:var(--ink)}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+    padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow);z-index:80;
+    max-width:calc(100% - 32px);text-align:center;animation:tin .2s ease
+  }
+  @keyframes tin{from{opacity:0;transform:translate(-50%,8px)}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
+
+  /* ---------- image cropper ---------- */
+  dialog#cropper{border:0;padding:0;margin:0;background:transparent;width:100vw;height:100vh;max-width:100vw;max-height:100vh}
+  dialog#cropper::backdrop{background:rgba(0,0,0,.45)}
+  .cropper{width:100%;height:100%;background:rgba(20,22,26,.74);display:flex;align-items:center;justify-content:center;padding:16px}
+  .cropper__box{background:var(--surface);border-radius:16px;padding:16px;max-width:360px;width:100%}
+  .cropper__h{font-size:14px;font-weight:700;margin-bottom:4px}
+  .cropper__tip{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+  .cropper__view{position:relative;overflow:hidden;border-radius:10px;background:var(--surface-2);margin:0 auto;touch-action:none;cursor:grab}
+  .cropper__view:active{cursor:grabbing}
+  .cropper__img{position:absolute;left:50%;top:50%;transform-origin:center center;user-select:none;-webkit-user-drag:none;will-change:transform}
+  .cropper__zoom{width:100%;margin:14px 0 2px;accent-color:var(--accent)}
+  .cropper__foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+</style>
+
+<div id="app" class="app"></div>
+<div id="toast" class="toast" hidden></div>
+<dialog id="modal"></dialog>
+<dialog id="cropper"></dialog>
+
+<script>
+"use strict";
+/* ============================================================ 攤位收銀台 ============================================================ */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = n=>'$'+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
+const pad = x=>String(x).padStart(2,'0');
+const fmtDate = ts=>{const d=new Date(ts);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const fmtTime = ts=>{const d=new Date(ts);return `${fmtDate(ts)} ${pad(d.getHours())}:${pad(d.getMinutes())}`};
+
+const THEMES = [
+  {name:'松綠',hex:'#0f7a58'},{name:'翠綠',hex:'#059669'},{name:'青綠',hex:'#0d9488'},
+  {name:'湖藍',hex:'#0891b2'},{name:'天藍',hex:'#0284c7'},{name:'靛藍',hex:'#2563eb'},
+  {name:'藍紫',hex:'#4f46e5'},{name:'紫羅蘭',hex:'#7c3aed'},{name:'梅紅',hex:'#a21caf'},
+  {name:'玫瑰',hex:'#e11d48'},{name:'磚紅',hex:'#dc2626'},{name:'焦橙',hex:'#c2410c'},
+  {name:'琥珀',hex:'#b45309'},{name:'金黃',hex:'#cb9228'},{name:'橄欖',hex:'#4d7c0f'},{name:'石墨',hex:'#475569'},
+];
+
+const STORE_KEY = 'stall-register-v2';
+let DB = { stalls:[], settings:{ accent:THEMES[0].hex } };
+let UI = { screen:'home', stallId:null, tab:'products', cart:[], stage:'catalog', free:false, openOrders:{}, dateFilter:'' };
+
+/* ---------- persistence ---------- */
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){} }
+function load(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(raw){ DB=JSON.parse(raw); if(!DB.settings) DB.settings={accent:THEMES[0].hex}; if(!DB.stalls) DB.stalls=[]; return true; }
+  }catch(e){}
+  return false;
+}
+function relLum(hex){
+  const n=parseInt(hex.slice(1),16), r=(n>>16&255)/255, g=(n>>8&255)/255, b=(n&255)/255;
+  const f=c=>c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
+}
+function applyTheme(){
+  const hex=DB.settings.accent||THEMES[0].hex;
+  const root=document.documentElement.style;
+  root.setProperty('--accent',hex);
+  root.setProperty('--accent-on', relLum(hex)>0.30 ? '#1e2126' : '#ffffff');
+}
+
+/* ---------- image helpers ---------- */
+function processImage(file,cb){        // centre-crop square + compress
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const size=480, c=document.createElement('canvas'); c.width=size; c.height=size;
+      const s=Math.min(img.width,img.height), sx=(img.width-s)/2, sy=(img.height-s)/2;
+      const ctx=c.getContext('2d');
+      ctx.fillStyle='#fff'; ctx.fillRect(0,0,size,size);
+      ctx.drawImage(img, sx,sy,s,s, 0,0,size,size);
+      cb(c.toDataURL('image/jpeg',0.82));
+    };
+    img.src=rd.result;
+  };
+  rd.readAsDataURL(file);
+}
+function processImageWide(file,cb){    // keep aspect, cap width, compress (for banners)
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxW=1000, sc=Math.min(1,maxW/img.width);
+      const w=Math.max(1,Math.round(img.width*sc)), h=Math.max(1,Math.round(img.height*sc));
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.82));
+    };
+    img.src=rd.result;
+  };
+  rd.readAsDataURL(file);
+}
+/* mobile-safe picker: build the input on the fly and click it inside the user gesture,
+   then open the drag/zoom cropper before handing back the final data URL */
+function pickImage(cb,wide){
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='image/*';
+  inp.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';
+  document.body.appendChild(inp);
+  inp.onchange=()=>{ const f=inp.files&&inp.files[0]; if(f) openCropper(f,wide,cb); setTimeout(()=>inp.remove(),0); };
+  inp.click();
+}
+function openCropper(file,wide,cb){
+  const outW=wide?1000:480, outH=wide?Math.round(1000*6/16):480;
+  const rd=new FileReader();
+  rd.onload=()=>{ const img=new Image(); img.onload=()=>showCropUI(img,outW,outH,cb); img.onerror=()=>cb(rd.result); img.src=rd.result; };
+  rd.readAsDataURL(file);
+}
+function showCropUI(img,outW,outH,cb){
+  const VW=300, VH=Math.round(300*outH/outW);
+  const NW=img.naturalWidth||img.width, NH=img.naturalHeight||img.height;
+  const s0=Math.max(VW/NW, VH/NH);        // cover baseline
+  let z=1, tx=0, ty=0, drag=null;
+
+  const cd=document.getElementById('cropper');
+  cd.innerHTML=`<div class="cropper"><div class="cropper__box">
+    <div class="cropper__h">調整圖片</div>
+    <div class="cropper__tip">拖曳移動位置，下方滑桿縮放</div>
+    <div class="cropper__view" style="width:${VW}px;height:${VH}px">
+      <img class="cropper__img" alt="" draggable="false">
+    </div>
+    <input type="range" class="cropper__zoom" min="1" max="3" step="0.01" value="1">
+    <div class="cropper__foot">
+      <button class="btn" data-cc>取消</button>
+      <button class="btn btn--primary" data-co>套用</button>
+    </div>
+  </div></div>`;
+  if(!cd.open) cd.showModal();
+  const finish=()=>{ if(cd.open) cd.close(); cd.innerHTML=''; };
+  const ov=cd;
+  const el=cd.querySelector('.cropper__img');
+  el.src=img.src;
+  el.style.width=(NW*s0)+'px'; el.style.height=(NH*s0)+'px';
+
+  function clamp(){
+    const dw=NW*s0*z, dh=NH*s0*z;
+    const mx=Math.max(0,(dw-VW)/2), my=Math.max(0,(dh-VH)/2);
+    tx=Math.min(mx,Math.max(-mx,tx)); ty=Math.min(my,Math.max(-my,ty));
+  }
+  function apply(){ clamp(); el.style.transform=`translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${z})`; }
+  apply();
+
+  const view=ov.querySelector('.cropper__view');
+  view.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,tx,ty}; try{view.setPointerCapture(e.pointerId);}catch(_){} });
+  view.addEventListener('pointermove',e=>{ if(!drag) return; tx=drag.tx+(e.clientX-drag.x); ty=drag.ty+(e.clientY-drag.y); apply(); });
+  const endDrag=()=>{ drag=null; };
+  view.addEventListener('pointerup',endDrag); view.addEventListener('pointercancel',endDrag); view.addEventListener('pointerleave',endDrag);
+  ov.querySelector('.cropper__zoom').addEventListener('input',e=>{ z=parseFloat(e.target.value)||1; apply(); });
+
+  ov.querySelector('[data-cc]').onclick=finish;
+  ov.querySelector('[data-co]').onclick=()=>{
+    clamp();
+    const k=s0*z, dw=NW*k, dh=NH*k;
+    const sw=Math.min(VW/k,NW), sh=Math.min(VH/k,NH);
+    const sx=Math.max(0,Math.min((dw/2 - VW/2 - tx)/k, NW-sw));
+    const sy=Math.max(0,Math.min((dh/2 - VH/2 - ty)/k, NH-sh));
+    const c=document.createElement('canvas'); c.width=outW; c.height=outH;
+    const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,outW,outH);
+    ctx.drawImage(img, sx, sy, sw, sh, 0,0, outW,outH);
+    finish();
+    cb(c.toDataURL('image/jpeg',0.85));
+  };
+}
+
+/* ---------- model helpers ---------- */
+const stall = ()=>DB.stalls.find(s=>s.id===UI.stallId);
+const product = (st,id)=>st.products.find(p=>p.id===id);
+const bundle  = (st,id)=>st.bundles.find(b=>b.id===id);
+const hasSpec = p=>p.specs && p.specs.length>0;
+function variantByCombo(p,combo){
+  const key=p.specs.map(s=>combo[s.id]).join(' / ');
+  return p.variants.find(v=>v.key===key);
+}
+function productLocked(p){ return !!p.everSold; }
+function bundleLocked(b){ return !!b.everSold; }
+
+/* returns [{pvId, product, variant, name, detail, stock, initial, sold, img}] */
+function priceUnits(st){
+  const out=[];
+  st.products.forEach(p=>{
+    if(hasSpec(p)) p.variants.forEach(v=>out.push({pvId:v.id,product:p,variant:v,name:p.name,detail:v.key,stock:v.stock,initial:v.initialStock,sold:v.sold||0,img:v.img||p.image||''}));
+    else out.push({pvId:p.id,product:p,variant:null,name:p.name,detail:'',stock:p.stock,initial:p.initialStock,sold:p.sold||0,img:p.image||''});
+  });
+  return out;
+}
+function resolvePv(st,pvId){
+  for(const p of st.products){
+    if(p.id===pvId) return {product:p,variant:null};
+    if(hasSpec(p)){ const v=p.variants.find(x=>x.id===pvId); if(v) return {product:p,variant:v}; }
+  }
+  return {product:null,variant:null};
+}
+const pvStock = (st,pvId)=>{ const {product:p,variant:v}=resolvePv(st,pvId); return p?(v?v.stock:p.stock):0; };
+
+/* stock consumed by the current cart (per pvId) */
+function pvConsumed(st,pvId,exceptLineUid){
+  let c=0;
+  UI.cart.forEach(l=>{
+    if(l.uid===exceptLineUid) return;
+    if(l.kind==='product' && l.pvId===pvId) c+=l.qty;
+    if(l.kind==='bundle'){
+      const b=bundle(st,l.bundleId); if(!b) return;
+      b.components.forEach((comp,i)=>{
+        const cp=product(st,comp.productId);
+        if(cp && hasSpec(cp)){
+          const arr = Array.isArray(l.picks[i]) ? l.picks[i] : (l.picks[i]!=null ? [l.picks[i]] : []);
+          arr.forEach(vid=>{ if(vid===pvId) c += l.qty; });
+        }else if(comp.productId===pvId){ c += comp.qty*l.qty; }
+      });
+    }
+  });
+  return c;
+}
+const pvRemaining = (st,pvId,exceptLineUid)=>pvStock(st,pvId)-pvConsumed(st,pvId,exceptLineUid);
+
+/* bundle component meta at render time */
+function bundleComps(st,b){
+  return b.components.map(comp=>{
+    const p=product(st,comp.productId);
+    return {...comp, product:p, needsSpec: !!(p && hasSpec(p)), missing: !p};
+  });
+}
+function bundleMaxBuild(st,b,picks,exceptLineUid){
+  const comps=bundleComps(st,b);
+  if(comps.some(c=>c.missing)) return 0;
+  const demand={};   // pvId -> units consumed per one bundle
+  let incomplete=false;
+  comps.forEach((c,i)=>{
+    if(c.needsSpec){
+      const arr = picks && Array.isArray(picks[i]) ? picks[i] : null;
+      if(!arr || arr.length<c.qty || arr.some(x=>!x)){ incomplete=true; return; }
+      arr.forEach(vid=>{ demand[vid]=(demand[vid]||0)+1; });
+    }else{
+      demand[c.productId]=(demand[c.productId]||0)+c.qty;
+    }
+  });
+  if(incomplete) return 0;
+  let m=Infinity;
+  for(const pv in demand){ m=Math.min(m, Math.floor(pvRemaining(st,pv,exceptLineUid)/demand[pv])); }
+  return m===Infinity?0:m;
+}
+
+/* ---------- cart line resolution ---------- */
+function resolveLine(st,l){
+  if(l.kind==='product'){
+    const {product:p,variant:v}=resolvePv(st,l.pvId);
+    if(!p) return {ok:false,name:'(已刪除商品)',detail:'',unit:0,qty:l.qty,sub:0};
+    return {ok:true,name:p.name,detail:v?v.key:'',unit:p.price,qty:l.qty,sub:p.price*l.qty,productId:p.id,pvId:l.pvId};
+  }
+  const b=bundle(st,l.bundleId);
+  if(!b) return {ok:false,name:'(已刪除套組)',detail:'',unit:0,qty:l.qty,sub:0};
+  const comps=bundleComps(st,b);
+  const detail=comps.map((c,i)=>{
+    if(c.missing) return '(缺)';
+    if(c.needsSpec){
+      const arr=Array.isArray(l.picks[i])?l.picks[i]:(l.picks[i]!=null?[l.picks[i]]:[]);
+      const names=arr.map(vid=>{ const v=c.product.variants.find(x=>x.id===vid); return v?v.key:'未選'; });
+      return `${c.product.name}（${names.join('、')||'未選'}）`;
+    }
+    return c.product.name+'×'+c.qty;
+  }).join('、');
+  const ok=comps.every((c,i)=>{
+    if(c.missing) return false;
+    if(!c.needsSpec) return true;
+    const arr=Array.isArray(l.picks[i])?l.picks[i]:[];
+    return arr.length>=c.qty && arr.every(x=>x);
+  });
+  return {ok,name:b.name,detail,unit:b.price,qty:l.qty,sub:b.price*l.qty,bundleId:b.id,comps,picks:l.picks};
+}
+function cartTotal(st){ return UI.cart.reduce((a,l)=>a+resolveLine(st,l).sub,0); }
+function cartCount(st){ return UI.cart.reduce((a,l)=>a+l.qty,0); }
+
+/* ---------- payment ---------- */
+function applyPayment(st,free){
+  const lines=[]; let total=0;
+  UI.cart.forEach(l=>{
+    const r=resolveLine(st,l); if(!r.ok) return;
+    if(l.kind==='product'){
+      const {product:p,variant:v}=resolvePv(st,l.pvId);
+      const tgt=v||p; tgt.stock-=l.qty; tgt.sold=(tgt.sold||0)+l.qty; p.everSold=true;
+      lines.push({kind:'product',productId:p.id,name:p.name,detail:v?v.key:'',qty:l.qty,unitPrice:p.price,lineTotal:p.price*l.qty,restore:[{pvId:tgt.id,qty:l.qty}]});
+      total+=p.price*l.qty;
+    }else{
+      const b=bundle(st,l.bundleId); const comps=bundleComps(st,b); const pids=[]; const restore=[];
+      comps.forEach((c,i)=>{
+        if(c.needsSpec){
+          const arr=Array.isArray(l.picks[i])?l.picks[i]:[l.picks[i]];
+          arr.forEach(vid=>{
+            const {product:p,variant:v}=resolvePv(st,vid); const tgt=v||p;
+            if(tgt){ tgt.stock-=l.qty; tgt.sold=(tgt.sold||0)+l.qty; p.everSold=true; pids.push(p.id); restore.push({pvId:tgt.id,qty:l.qty}); }
+          });
+        }else{
+          const {product:p,variant:v}=resolvePv(st,c.productId); const tgt=v||p;
+          if(tgt){ tgt.stock-=c.qty*l.qty; tgt.sold=(tgt.sold||0)+c.qty*l.qty; p.everSold=true; pids.push(p.id); restore.push({pvId:tgt.id,qty:c.qty*l.qty}); }
+        }
+      });
+      lines.push({kind:'bundle',bundleId:b.id,productIds:pids,name:b.name,detail:r.detail,qty:l.qty,unitPrice:b.price,lineTotal:b.price*l.qty,restore});
+      total+=b.price*l.qty;
+    }
+  });
+  const order={id:uid(),time:Date.now(),free:!!free,listTotal:total,total:free?0:total,lines};
+  st.orders.push(order);
+  st.income=(st.income||0)+(free?0:total);
+  save();
+  return order;
+}
+function orderRefsProduct(st,pid){ return st.orders.some(o=>o.lines.some(l=> l.productId===pid || (l.productIds&&l.productIds.includes(pid)) )); }
+function fallbackRestore(st,l){
+  if(l.kind==='product'){
+    const p=st.products.find(x=>x.id===l.productId); if(!p) return [];
+    if(l.detail && p.variants){ const v=p.variants.find(x=>x.key===l.detail); if(v) return [{pvId:v.id,qty:l.qty}]; }
+    return [{pvId:l.productId,qty:l.qty}];
+  }
+  return [];
+}
+function deleteOrder(st,oid){
+  const idx=st.orders.findIndex(o=>o.id===oid); if(idx<0) return;
+  const o=st.orders[idx];
+  st.income=Math.max(0,(st.income||0)-(o.free?0:o.total));
+  o.lines.forEach(l=>{
+    (l.restore || fallbackRestore(st,l)).forEach(en=>{
+      const {product:p,variant:v}=resolvePv(st,en.pvId); const tgt=v||p;
+      if(tgt){ tgt.stock+=en.qty; tgt.sold=Math.max(0,(tgt.sold||0)-en.qty); }
+    });
+  });
+  st.orders.splice(idx,1);
+  st.products.forEach(p=>{ p.everSold = orderRefsProduct(st,p.id); });
+  st.bundles.forEach(b=>{ b.everSold = st.orders.some(o=>o.lines.some(l=>l.bundleId===b.id)); });
+  save();
+}
+
+/* ============================================================ RENDER ============================================================ */
+const app=$('#app');
+function render(){ UI.screen==='home' ? renderHome() : renderStall(); }
+
+/* ---------------- HOME ---------------- */
+function renderHome(){
+  const tiles = DB.stalls.slice().sort((a,b)=>b.createdAt-a.createdAt).map(s=>`
+    <div class="tile" role="button" tabindex="0" data-act="open-stall" data-id="${s.id}">
+      ${s.cover?`<img class="tile__img" src="${s.cover}" alt="">`:`<span class="tile__ph">🏪</span>`}
+      <button class="tile__del" data-act="del-stall" data-id="${s.id}" aria-label="刪除攤位">✕</button>
+      <span class="tile__cap">
+        <span class="tile__nm">${esc(s.name)}</span>
+        <span class="tile__meta"><span>建立 <span class="mo">${fmtDate(s.createdAt)}</span></span><span>收入 <span class="mo">${money(s.income)}</span></span></span>
+      </span>
+    </div>`).join('');
+
+  const banner=DB.settings.homeBanner||'';
+  app.innerHTML=`<div class="home">
+    <div class="home-banner" role="button" tabindex="0" data-act="edit-banner">
+      ${banner?`<img src="${banner}" alt="">`:''}
+      <button class="home-banner__pal" data-act="settings" aria-label="佈景與主題色">🎨</button>
+      ${banner?'':`<span class="home-banner__hint">點這裡放上封面圖</span>`}
+    </div>
+    <button class="btn btn--primary newstall-btn" data-act="new-stall">＋ 建立新攤位</button>
+    ${DB.stalls.length?`<div class="tile-grid">${tiles}</div>`:`<div class="empty">還沒有任何攤位，點上方按鈕開始。</div>`}
+  </div>`;
+}
+
+/* ---------------- STALL SHELL ---------------- */
+function renderStall(){
+  const st=stall();
+  if(!st){ UI.screen='home'; return render(); }
+  const tabs=[['products','商品'],['checkout','收銀'],['settle','結算']];
+  app.innerHTML=`<div class="stall">
+    <div class="stall__top">
+      <div class="stall__bar">
+        <button class="btn btn--ghost btn--sm" data-act="back">← 返回</button>
+        <button class="stall__title" data-act="edit-stall">
+          <span class="nm">${esc(st.name)}<small>建立於 ${fmtDate(st.createdAt)}</small></span>
+          <span class="pen">✎ 編輯</span>
+        </button>
+      </div>
+      <div class="tabs" role="tablist">
+        ${tabs.map(([k,l])=>`<button class="tab ${k==='checkout'?'tab--primary':''}" role="tab" aria-selected="${UI.tab===k}" data-act="tab" data-id="${k}">${l}</button>`).join('')}
+      </div>
+    </div>
+    <div class="stall__body" id="body"></div>
+  </div>`;
+  const body=$('#body');
+  if(UI.tab==='products') renderProducts(st,body);
+  else if(UI.tab==='checkout') renderCheckout(st,body);
+  else renderSettle(st,body);
+}
+
+/* ---------------- PRODUCTS ---------------- */
+function totalStock(p){ return hasSpec(p)?p.variants.reduce((a,v)=>a+v.stock,0):p.stock; }
+function stockChip(n){ return n<=0?`<span class="chip chip--out">售罄</span>`:n<=3?`<span class="chip chip--low">剩 ${n}</span>`:`<span class="chip">庫存 ${n}</span>`; }
+function renderProducts(st,body){
+  const prod=st.products.map(p=>{
+    const ss=totalStock(p);
+    return `<div class="item">
+      ${p.image?`<img class="thumb" src="${p.image}" alt="">`:`<div class="thumb">🏷️</div>`}
+      <div class="item__body">
+        <div class="item__name">${esc(p.name)} ${productLocked(p)?'<span class="chip">已售出</span>':''}</div>
+        <div class="item__sub">${hasSpec(p)?esc(p.specs.map(s=>s.name).join(' · ')):'單一品項'} ${stockChip(ss)}</div>
+        <div class="item__price money">${money(p.price)}</div>
+        ${hasSpec(p)?`<div class="vlines">${p.variants.map(v=>`<div><span>${esc(v.key)}</span><span class="mono">${v.stock}</span></div>`).join('')}</div>`:''}
+      </div>
+      <div class="item__actions">
+        <button class="btn btn--ghost btn--sm" data-act="edit-product" data-id="${p.id}">修改</button>
+        <button class="btn btn--danger btn--sm" data-act="del-product" data-id="${p.id}">刪除</button>
+      </div>
+    </div>`;}).join('');
+
+  const bund=st.bundles.map(b=>{
+    const comps=bundleComps(st,b);
+    const contents=comps.map(c=>(c.missing?'(已刪除)':c.product.name)+'×'+c.qty).join('、');
+    const orig=comps.reduce((a,c)=>a+(c.product?c.product.price*c.qty:0),0);
+    return `<div class="item">
+      <div class="thumb">🎁</div>
+      <div class="item__body">
+        <div class="item__name">${esc(b.name)} ${bundleLocked(b)?'<span class="chip">已售出</span>':''}</div>
+        <div class="item__sub">${esc(contents||'尚未選擇商品')}</div>
+        <div class="item__price money">${money(b.price)}<s>${money(orig)}</s></div>
+      </div>
+      <div class="item__actions">
+        <button class="btn btn--ghost btn--sm" data-act="edit-bundle" data-id="${b.id}">修改</button>
+        <button class="btn btn--danger btn--sm" data-act="del-bundle" data-id="${b.id}">刪除</button>
+      </div>
+    </div>`;}).join('');
+
+  body.innerHTML=`
+    <div class="section-head"><h2>商品品項</h2><button class="btn btn--primary btn--sm" data-act="add-product">＋ 新增商品</button></div>
+    ${st.products.length?`<div class="items">${prod}</div>`:`<div class="empty"><h3>尚無商品</h3>新增商品品項，可設定品名、圖片、價格、庫存與自訂規格。</div>`}
+    <div class="section-head"><h2>套組品項</h2><button class="btn btn--primary btn--sm" data-act="add-bundle" ${st.products.length?'':'disabled'}>＋ 新增套組</button></div>
+    ${st.bundles.length?`<div class="items">${bund}</div>`:`<div class="empty"><h3>尚無套組</h3>挑數個商品組成套組並重新定價，規格於收銀加入購物車時再選。</div>`}`;
+}
+
+/* ---------------- CHECKOUT ---------------- */
+function renderCheckout(st,body){
+  if(!st.products.length){ body.innerHTML=`<div class="empty"><h3>尚無商品可結帳</h3>請先到「商品」頁新增品項。</div>`; return; }
+  if(UI.stage==='confirm'){ renderConfirm(st,body); return; }
+
+  const tiles=st.products.map(p=>{
+    const rem=hasSpec(p)?p.variants.reduce((a,v)=>a+pvRemaining(st,v.id),0):pvRemaining(st,p.id);
+    const out=rem<=0;
+    return `<button class="tile ${out?'is-out':''}" data-act="pick-product" data-id="${p.id}">
+      ${p.image?`<img class="tile__img" src="${p.image}" alt="">`:`<span class="tile__ph">🏷️</span>`}
+      <span class="tile__badge ${out?'out':rem<=3?'low':''}">${out?'售罄':'庫存 '+rem}</span>
+      <span class="tile__cap"><span class="tile__nm">${esc(p.name)}</span>
+        <span class="tile__meta"><span class="mo">${money(p.price)}</span>${hasSpec(p)?'<span>可選規格</span>':''}</span></span>
+    </button>`;}).join('');
+
+  const btiles=st.bundles.map(b=>{
+    const mx=bundleMaxBuild(st,b,null);
+    const comps=bundleComps(st,b);
+    const specNeeded=comps.some(c=>c.needsSpec);
+    const out=comps.some(c=>c.missing) || (!specNeeded && mx<=0);
+    return `<button class="tile ${out?'is-out':''}" data-act="pick-bundle" data-id="${b.id}">
+      <span class="tile__ph">🎁</span>
+      <span class="tile__badge ${out?'out':''}">${comps.some(c=>c.missing)?'商品不足':specNeeded?'選規格':(mx<=0?'售罄':'可組 '+mx)}</span>
+      <span class="tile__cap"><span class="tile__nm">${esc(b.name)}</span>
+        <span class="tile__meta"><span class="mo">${money(b.price)}</span></span></span>
+    </button>`;}).join('');
+
+  const total=cartTotal(st), count=cartCount(st);
+  body.innerHTML=`
+    <div class="section-head"><h2>商品</h2></div>
+    <div class="tile-grid">${tiles}</div>
+    ${st.bundles.length?`<div class="section-head"><h2>套組</h2></div><div class="tile-grid">${btiles}</div>`:''}
+    <div class="cart">
+      <div class="cart__h"><span>收銀購物車</span><span>${count} 件</span></div>
+      ${UI.cart.length?UI.cart.map(l=>cartLineRow(st,l)).join(''):`<div class="empty" style="padding:20px">點上方商品加入購物車</div>`}
+    </div>
+    <div class="checkout-foot">
+      <div class="checkout-foot__s"><span class="label">本次總金額</span>
+        <span class="checkout-foot__t money">${money(total)}</span> <span class="checkout-foot__c">${count} 件品項</span></div>
+      <button class="btn btn--primary" data-act="go-confirm" ${count?'':'disabled'}>送出收銀</button>
+    </div>`;
+}
+function cartLineRow(st,l){
+  const r=resolveLine(st,l);
+  const canInc = l.kind==='product' ? pvRemaining(st,l.pvId,l.uid) >= l.qty+1
+                                    : bundleMaxBuild(st,bundle(st,l.bundleId),l.picks,l.uid) >= l.qty+1;
+  return `<div class="cart-line ${r.ok?'':'bad'}">
+    <div class="cart-line__b">
+      <div class="cart-line__nm">${esc(r.name)}</div>
+      ${r.detail?`<div class="cart-line__d">${esc(r.detail)}</div>`:''}
+    </div>
+    <div class="stepper">
+      <button data-act="line-dec" data-uid="${l.uid}" aria-label="減少">−</button>
+      <span class="q">${l.qty}</span>
+      <button data-act="line-inc" data-uid="${l.uid}" ${canInc?'':'disabled'} aria-label="增加">＋</button>
+    </div>
+    <div class="cart-line__sub money">${money(r.sub)}</div>
+    <button class="cart-line__x" data-act="line-del" data-uid="${l.uid}" aria-label="移除">✕</button>
+  </div>`;
+}
+function renderConfirm(st,body){
+  const total=cartTotal(st), count=cartCount(st);
+  body.innerHTML=`
+    <div class="section-head"><h2>確認本次收款</h2><button class="btn btn--ghost btn--sm" data-act="back-catalog">← 繼續加購</button></div>
+    ${UI.cart.length?UI.cart.map(l=>cartLineRow(st,l)).join(''):`<div class="empty" style="padding:20px">購物車已清空</div>`}
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:12px;border-top:2px solid var(--line-strong)">
+      <span class="label">應收總額（${count} 件）</span>
+      <span class="money" style="font-size:23px;font-weight:700">${UI.free?money(0):money(total)}</span>
+    </div>
+    <label class="free-toggle ${UI.free?'on':''}">
+      <input type="checkbox" data-act="toggle-free" ${UI.free?'checked':''}>
+      <span><b>此單免費（贈送）</b><small>不列入收入，但仍會記錄訂單並扣除庫存</small></span>
+    </label>
+    <button class="btn btn--primary btn--block" data-act="confirm-pay" ${count?'':'disabled'}>${UI.free?'確認贈送出貨':'確認收款 '+money(total)}</button>`;
+}
+
+/* ---------------- SETTLE ---------------- */
+function niceMax(v){ if(v<=0)return 10; const m=Math.pow(10,Math.floor(Math.log10(v))); const n=v/m; const s=n<=1?1:n<=2?2:n<=5?5:10; return s*m; }
+function renderSettle(st,body){
+  const per=st.products.map(p=>{
+    if(hasSpec(p)){
+      return {name:p.name,
+        cur:p.variants.reduce((a,v)=>a+v.stock,0),
+        ini:p.variants.reduce((a,v)=>a+v.initialStock,0),
+        sold:p.variants.reduce((a,v)=>a+(v.sold||0),0)};
+    }
+    return {name:p.name,cur:p.stock,ini:p.initialStock,sold:p.sold||0};
+  });
+
+  const tiles=per.map(d=>{
+    const pct=d.ini>0?Math.max(0,Math.min(100,d.cur/d.ini*100)):0;
+    return `<div class="stat ${d.cur<=0?'is-out':''}">
+      <div class="stat__nm">${esc(d.name)}</div>
+      <div class="stat__big"><span class="cur">${d.cur}</span><span class="sep">/</span><span class="ini">${d.ini}</span></div>
+      <div class="stat__bar"><i style="width:${pct}%"></i></div>
+    </div>`;}).join('');
+
+  const cd=per.filter(d=>d.ini>0||d.sold>0);
+  let chart;
+  if(!cd.length){ chart=`<div class="empty" style="padding:22px">尚無庫存與銷售資料</div>`; }
+  else{
+    const max=niceMax(Math.max(...cd.map(d=>Math.max(d.ini,d.sold+d.cur))));
+    const gutter=118,rpad=82,rowH=30,gap=12,top=6,W=680,plotW=W-gutter-rpad;
+    const H=top+cd.length*(rowH+gap)+26;
+    const x=v=>gutter+(v/max)*plotW;
+    const ticks=[]; for(let i=0;i<=5;i++) ticks.push(max/5*i);
+    const grid=ticks.map(t=>`<line class="ck-grid" x1="${x(t).toFixed(1)}" y1="${top}" x2="${x(t).toFixed(1)}" y2="${top+cd.length*(rowH+gap)}"/><text class="ck-axis" x="${x(t).toFixed(1)}" y="${H-8}" text-anchor="middle">${Math.round(t)}</text>`).join('');
+    const bars=cd.map((d,i)=>{
+      const y=top+i*(rowH+gap);
+      const sw=Math.max(0,x(d.sold)-x(0)), rw=Math.max(0,x(d.sold+d.cur)-x(d.sold));
+      const g=sw>0&&rw>0?2:0;
+      return `<g>
+        <text class="ck-name" x="${gutter-10}" y="${y+rowH/2+4}" text-anchor="end">${esc(d.name.length>8?d.name.slice(0,8)+'…':d.name)}</text>
+        ${sw>0?`<rect class="ck-sold" x="${x(0).toFixed(1)}" y="${y}" width="${sw.toFixed(1)}" height="${rowH}" rx="4"/>`:''}
+        ${rw>0?`<rect class="ck-remain" x="${(x(d.sold)+g).toFixed(1)}" y="${y}" width="${Math.max(0,rw-g).toFixed(1)}" height="${rowH}" rx="4"/>`:''}
+        <text class="ck-val" x="${Math.min(x(d.sold+d.cur)+7,W-78).toFixed(1)}" y="${y+rowH/2+4}">售 ${d.sold}／初 ${d.ini}</text>
+      </g>`;}).join('');
+    chart=`<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="各品項初始庫存與銷量長條圖">${grid}${bars}</svg></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>已售出</span><span><i style="background:var(--accent-weak)"></i>剩餘庫存</span></div>`;
+  }
+
+  const orders=st.orders.slice().sort((a,b)=>b.time-a.time);
+  const oHtml=orders.length?orders.map(o=>`
+    <div class="order ${UI.openOrders[o.id]?'open':''}">
+      <button class="order__head" data-act="toggle-order" data-id="${o.id}">
+        <span class="order__time">${fmtTime(o.time)}</span>
+        ${o.free?'<span class="free-tag">贈送</span>':''}
+        <span class="order__total money">${o.free?`<s>${money(o.listTotal)}</s>`:''}${money(o.total)}</span>
+        <span class="order__cnt">${o.lines.reduce((a,l)=>a+l.qty,0)} 件</span>
+      </button>
+      <div class="order__lines">
+        ${o.lines.map(l=>`<div class="order__line"><span><b>${esc(l.name)}</b>${l.detail?' '+esc(l.detail):''} × ${l.qty}</span><span class="lm">${money(l.lineTotal)}</span></div>`).join('')}
+        <button class="btn btn--danger btn--sm" data-act="del-order" data-id="${o.id}" style="align-self:flex-start;margin-top:8px">刪除此筆訂單並還原</button>
+      </div>
+    </div>`).join('') : `<div class="empty" style="padding:20px">尚無訂單紀錄</div>`;
+
+  const totalSold=per.reduce((a,d)=>a+d.sold,0);
+  const freeCnt=st.orders.filter(o=>o.free).length;
+
+  body.innerHTML=`
+    <div class="hero-income"><span class="label">目前收入總金額</span>
+      <div class="amt">${money(st.income)}</div>
+      <div class="sub">${st.orders.length} 筆訂單${freeCnt?`（含 ${freeCnt} 筆贈送）`:''} · 累計售出 ${totalSold} 件</div>
+    </div>
+    <div class="section-head"><h2>現在庫存 / 初始庫存</h2></div>
+    ${per.length?`<div class="stat-grid">${tiles}</div>`:`<div class="empty">尚無商品</div>`}
+    <div class="panel"><div class="panel__title">各品項初始庫存與銷量</div>${chart}</div>
+    <div class="panel">
+      <div class="panel__title">訂單紀錄 <span style="font-weight:400;color:var(--muted);margin-left:6px">共 ${orders.length} 筆</span></div>
+      <div class="orders">${oHtml}</div>
+    </div>`;
+}
+
+/* ============================================================ EVENTS ============================================================ */
+app.addEventListener('click',async e=>{
+  const t=e.target.closest('[data-act]'); if(!t) return;
+  const act=t.dataset.act, id=t.dataset.id, st=stall();
+
+  if(act==='new-stall') return openStallModal(null);
+  if(act==='settings') return openSettings();
+  if(act==='edit-banner'){ e.stopPropagation(); return pickImage(d=>{ DB.settings.homeBanner=d; save(); render(); }, true); }
+  if(act==='open-stall'){ UI.stallId=id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.openOrders={};UI.dateFilter=''; return render(); }
+  if(act==='del-stall'){
+    e.stopPropagation();
+    const s=DB.stalls.find(x=>x.id===id);
+    if(await confirmDialog(`確定要刪除攤位「${s.name}」？所有商品與訂單紀錄都會一併刪除，無法復原。`)){
+      DB.stalls=DB.stalls.filter(x=>x.id!==id); save(); render();
+    }
+    return;
+  }
+  if(act==='back'){ save(); UI.screen='home';UI.stallId=null;UI.cart=[]; return render(); }
+  if(act==='edit-stall') return openStallModal(st);
+  if(act==='tab'){ UI.tab=id; UI.stage='catalog'; return render(); }
+
+  if(act==='add-product') return openProductModal(st,null);
+  if(act==='edit-product') return openProductModal(st,product(st,id));
+  if(act==='del-product'){
+    const p=product(st,id);
+    if(await confirmDialog(`確定要刪除商品「${p.name}」？此動作無法復原（既有訂單紀錄不受影響）。`)){
+      st.products=st.products.filter(x=>x.id!==id); save(); render();
+    }
+    return;
+  }
+  if(act==='add-bundle') return openBundleModal(st,null);
+  if(act==='edit-bundle') return openBundleModal(st,bundle(st,id));
+  if(act==='del-bundle'){
+    const b=bundle(st,id);
+    if(await confirmDialog(`確定要刪除套組「${b.name}」？此動作無法復原。`)){
+      st.bundles=st.bundles.filter(x=>x.id!==id); save(); render();
+    }
+    return;
+  }
+
+  if(act==='pick-product') return openAddSheet(st,'product',id);
+  if(act==='pick-bundle') return openAddSheet(st,'bundle',id);
+  if(act==='line-inc'||act==='line-dec'){
+    const l=UI.cart.find(x=>x.uid===t.dataset.uid); if(!l) return;
+    if(act==='line-inc'){
+      const ok = l.kind==='product' ? pvRemaining(st,l.pvId,l.uid)>=l.qty+1
+                                    : bundleMaxBuild(st,bundle(st,l.bundleId),l.picks,l.uid)>=l.qty+1;
+      if(ok) l.qty++;
+    }else{ l.qty--; if(l.qty<=0) UI.cart=UI.cart.filter(x=>x.uid!==l.uid); }
+    renderCheckout(st,$('#body')); return;
+  }
+  if(act==='line-del'){ UI.cart=UI.cart.filter(x=>x.uid!==t.dataset.uid); renderCheckout(st,$('#body')); return; }
+  if(act==='go-confirm'){ UI.stage='confirm'; return renderCheckout(st,$('#body')); }
+  if(act==='back-catalog'){ UI.stage='catalog'; return renderCheckout(st,$('#body')); }
+  if(act==='toggle-free'){ UI.free = (typeof t.checked==='boolean') ? t.checked : !UI.free; return renderCheckout(st,$('#body')); }
+  if(act==='confirm-pay'){
+    if(!UI.cart.length) return;
+    const ord=applyPayment(st,UI.free);
+    UI.cart=[]; UI.stage='catalog'; const wasFree=UI.free; UI.free=false;
+    render();
+    toast(wasFree?`已記錄贈送訂單，庫存已扣除`:`已收款 ${money(ord.total)}，庫存與收入已更新`);
+    return;
+  }
+
+  if(act==='toggle-order'){ UI.openOrders[id]=!UI.openOrders[id]; t.closest('.order').classList.toggle('open'); return; }
+  if(act==='del-order'){
+    const o=st.orders.find(x=>x.id===id); if(!o) return;
+    const cnt=o.lines.reduce((a,l)=>a+l.qty,0);
+    const msg=o.free
+      ? `刪除這筆贈送訂單？庫存會加回 ${cnt} 件，收入不變。`
+      : `刪除這筆訂單？收入會扣回 ${money(o.total)}，庫存會加回 ${cnt} 件。此動作無法復原。`;
+    if(await confirmDialog(msg,'刪除訂單')){ deleteOrder(st,id); render(); toast('已刪除訂單，收入與庫存已還原'); }
+    return;
+  }
+});
+app.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const el=e.target.closest('[role="button"][data-act]');
+  if(el){ e.preventDefault(); el.click(); }
+});
+
+/* ============================================================ MODALS ============================================================ */
+const modal=$('#modal');
+function closeModal(){ if(modal.open) modal.close(); modal.innerHTML=''; }
+modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+function shell(title,bodyHtml,footHtml){
+  modal.innerHTML=`<div class="m-head"><h3>${esc(title)}</h3><button class="btn btn--ghost btn--sm" data-x aria-label="關閉">✕</button></div>
+    <div class="m-body">${bodyHtml}</div><div class="m-foot">${footHtml}</div>`;
+  $$('[data-x]',modal).forEach(el=>el.onclick=closeModal);
+  if(!modal.open) modal.showModal();
+}
+function confirmDialog(msg,okLabel='確認刪除',tone='danger'){
+  return new Promise(resolve=>{
+    let done=false; const fin=v=>{ if(done)return; done=true; resolve(v); closeModal(); };
+    shell('請確認',`<p class="confirm-msg">${esc(msg)}</p>`,
+      `<button class="btn" id="cfNo">取消</button><button class="btn ${tone==='danger'?'btn--dangerFill':'btn--primary'}" id="cfYes">${esc(okLabel)}</button>`);
+    $('#cfNo',modal).onclick=()=>fin(false);
+    $('#cfYes',modal).onclick=()=>fin(true);
+    $('[data-x]',modal).onclick=()=>fin(false);
+    modal.addEventListener('close',()=>fin(false),{once:true});
+  });
+}
+
+/* ----- settings ----- */
+function openSettings(){
+  shell('設定',
+    `<div class="field"><label>主題色</label>
+      <div class="swatches">${THEMES.map(t=>`<button class="swatch ${t.hex===DB.settings.accent?'on':''}" data-hex="${t.hex}" style="--sw:${t.hex}"><span></span><b>${t.name}</b></button>`).join('')}</div>
+      <div class="hint">套用到全部按鈕、分頁標籤與重點數字，設定會保存在本機。</div>
+    </div>`,
+    `<button class="btn btn--primary" data-x>完成</button>`);
+  $$('.swatch',modal).forEach(b=>b.onclick=()=>{
+    DB.settings.accent=b.dataset.hex; save(); applyTheme();
+    $$('.swatch',modal).forEach(x=>x.classList.toggle('on',x===b));
+  });
+}
+
+/* ----- stall create / edit ----- */
+function openStallModal(existing){
+  const draft = existing ? {id:existing.id,name:existing.name,cover:existing.cover||''} : {id:uid(),name:'',cover:''};
+  function bodyHtml(){
+    return `<div class="field"><label>攤位名稱</label><input type="text" id="snm" value="${esc(draft.name)}" placeholder="例如：夜市手作飾品攤" maxlength="40"></div>
+      <div class="field"><label>封面圖（選填）</label>
+        <button type="button" class="img-drop" id="scovBtn">
+          ${draft.cover?`<img src="${draft.cover}" alt="">`:`<span class="ph">🏪</span>`}
+          <span>${draft.cover?'點擊更換封面':'點擊選擇封面圖'}</span>
+        </button>
+      </div>
+      ${existing?'':`<div class="hint">建立日期會記為今天（${fmtDate(Date.now())}）。</div>`}
+      <div class="err" id="serr"></div>`;
+  }
+  shell(existing?'編輯攤位':'建立新攤位',bodyHtml(),
+    `<button class="btn" data-x2>取消</button><button class="btn btn--primary" id="ssave">${existing?'儲存':'建立'}</button>`);
+  $('[data-x2]',modal).onclick=closeModal;
+  function wire(){
+    $('#snm',modal).focus();
+    $('#scovBtn',modal).onclick=()=>pickImage(d=>{ draft.cover=d; draft.name=$('#snm',modal).value; $('.m-body',modal).innerHTML=bodyHtml(); wire(); });
+  }
+  wire();
+  $('#ssave',modal).onclick=()=>{
+    const name=$('#snm',modal).value.trim();
+    if(!name){ const er=$('#serr',modal); er.textContent='請輸入攤位名稱'; er.classList.add('show'); return; }
+    if(existing){ const s=stall(); s.name=name; s.cover=draft.cover; }
+    else{ DB.stalls.push({id:draft.id,name,createdAt:Date.now(),cover:draft.cover,products:[],bundles:[],orders:[],income:0}); }
+    save(); closeModal();
+    if(!existing){ UI.stallId=draft.id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.openOrders={};UI.dateFilter=''; }
+    render();
+  };
+}
+
+/* ----- product create / edit ----- */
+function openProductModal(st,existing){
+  const locked = existing && productLocked(existing);
+  const draft = existing ? JSON.parse(JSON.stringify(existing))
+    : {id:uid(),name:'',image:'',price:0,specs:[],stock:0,initialStock:0,sold:0,variants:[]};
+  draft.specs=draft.specs||[]; draft.variants=draft.variants||[];
+
+  function buildVariants(){
+    if(!draft.specs.length){ draft.variants=[]; return; }
+    let combos=[{}];
+    draft.specs.forEach(s=>{
+      const opts=(s.options&&s.options.length)?s.options:['—']; const next=[];
+      opts.forEach(o=>combos.forEach(c=>next.push({...c,[s.id]:o}))); combos=next;
+    });
+    draft.variants=combos.map(combo=>{
+      const key=draft.specs.map(s=>combo[s.id]).join(' / ');
+      const ex=draft.variants.find(v=>v.key===key);
+      return ex?{...ex,combo,key}:{id:uid(),key,combo,stock:0,initialStock:0,sold:0,img:''};
+    });
+  }
+  function bodyHtml(){
+    const d=locked?'disabled':'';
+    const specRows=draft.specs.map((s,i)=>`
+      <div class="spec-row" data-si="${i}">
+        <div class="field k"><input type="text" data-sf="name" value="${esc(s.name)}" placeholder="規格名" ${d}></div>
+        <div class="field v"><input type="text" data-sf="options" value="${esc((s.options||[]).join(', '))}" placeholder="選項，逗號分隔" ${d}></div>
+        ${locked?'':`<button class="btn btn--danger btn--sm" data-sdel="${i}" aria-label="刪除">✕</button>`}
+      </div>`).join('');
+
+    let stockBlock;
+    if(draft.specs.length){
+      buildVariants();
+      stockBlock=`<div class="field"><label>各規格庫存</label>
+        <div class="vtable">
+          <div class="vrow"><span class="vn hh">規格</span><span class="hh w">現有</span><span class="hh w">初始</span></div>
+          ${draft.variants.map(v=>`<div class="vrow" data-vid="${v.id}">
+            <span class="vn">${esc(v.key)}</span>
+            <input type="number" min="0" data-vf="stock" value="${v.stock}">
+            <input type="number" min="0" data-vf="initialStock" value="${v.initialStock}" ${locked?'disabled':''}>
+          </div>`).join('')}
+        </div></div>
+        <div class="field"><label>各規格圖片（選填）</label><div class="vimg-list">
+          ${draft.variants.map(v=>`<div class="vimg">
+            ${v.img?`<img src="${v.img}" alt="">`:`<span class="ph">🏷️</span>`}
+            <button class="btn btn--sm" data-vimg="${v.id}">${v.img?'更換':'上傳'}</button>
+            <span style="font-size:12px;color:var(--muted)">${esc(v.key)}</span>
+          </div>`).join('')}
+        </div></div>`;
+    }else{
+      stockBlock=`<div class="field-row">
+        <div class="field"><label>庫存（現有）</label><input type="number" min="0" id="pstock" value="${draft.stock}"></div>
+        <div class="field"><label>初始庫存</label><input type="number" min="0" id="pinit" value="${draft.initialStock}" ${d}></div>
+      </div>`;
+    }
+    return `${locked?`<div class="lock-note">此商品已有交易紀錄，僅能調整價格、庫存與圖片；品名與規格已鎖定，以保護既有訂單。</div>`:''}
+      <div class="field"><label>品名</label><input type="text" id="pname" value="${esc(draft.name)}" placeholder="商品名稱" maxlength="40" ${d}></div>
+      <div class="field"><label>商品主圖（選填）</label>
+        <button type="button" class="img-drop" id="pimgBtn">
+          ${draft.image?`<img src="${draft.image}" alt="">`:`<span class="ph">📷</span>`}
+          <span>${draft.image?'點擊更換圖片':'點擊選擇圖片'}</span>
+        </button>
+      </div>
+      <div class="field"><label>價格</label><input type="number" min="0" step="0.01" id="pprice" value="${draft.price}"></div>
+      <div class="field"><label>自訂規格（選填，例如尺寸、顏色）</label>${specRows}
+        ${locked?'':`<button class="btn btn--sm" id="addspec">＋ 新增規格</button>`}
+        ${draft.specs.length?'<div class="hint">有規格時，庫存與圖片依各規格分開設定。</div>':''}
+      </div>
+      ${stockBlock}
+      <div class="err" id="perr"></div>`;
+  }
+  function collect(){
+    draft.name=$('#pname',modal).value.trim();
+    draft.price=parseFloat($('#pprice',modal).value)||0;
+    $$('.spec-row',modal).forEach(row=>{
+      const i=+row.dataset.si;
+      draft.specs[i].name=$('[data-sf="name"]',row).value.trim();
+      draft.specs[i].options=$('[data-sf="options"]',row).value.split(',').map(x=>x.trim()).filter(Boolean);
+    });
+    if(draft.specs.length){
+      buildVariants();
+      $$('.vrow[data-vid]',modal).forEach(r=>{
+        const v=draft.variants.find(x=>x.id===r.dataset.vid); if(!v) return;
+        v.stock=Math.max(0,parseInt($('[data-vf="stock"]',r).value)||0);
+        const ii=$('[data-vf="initialStock"]',r); if(ii) v.initialStock=Math.max(0,parseInt(ii.value)||0);
+      });
+    }else{
+      draft.stock=Math.max(0,parseInt($('#pstock',modal).value)||0);
+      const pi=$('#pinit',modal); if(pi) draft.initialStock=Math.max(0,parseInt(pi.value)||0);
+    }
+  }
+  function rebuild(){ collect(); $('.m-body',modal).innerHTML=bodyHtml(); wire(false); }
+  function wire(focus){
+    if(focus && !locked) $('#pname',modal).focus();
+    const as=$('#addspec',modal);
+    if(as) as.onclick=()=>{ collect(); draft.specs.push({id:uid(),name:'',options:[]}); $('.m-body',modal).innerHTML=bodyHtml(); wire(false); };
+    $$('[data-sdel]',modal).forEach(b=>b.onclick=()=>{ collect(); draft.specs.splice(+b.dataset.sdel,1); $('.m-body',modal).innerHTML=bodyHtml(); wire(false); });
+    $$('.spec-row [data-sf]',modal).forEach(inp=>inp.addEventListener('change',rebuild));
+    const ps=$('#pstock',modal), pin=$('#pinit',modal);
+    if(ps&&pin&&!locked){ ps.addEventListener('input',()=>{ if(!pin.dataset.t) pin.value=ps.value; }); pin.addEventListener('input',()=>pin.dataset.t='1'); }
+    $$('.vrow [data-vf="stock"]',modal).forEach(inp=>inp.addEventListener('input',()=>{
+      const ii=inp.parentElement.querySelector('[data-vf="initialStock"]');
+      if(ii && !ii.disabled && !ii.dataset.t) ii.value=inp.value;
+    }));
+    $$('.vrow [data-vf="initialStock"]',modal).forEach(inp=>inp.addEventListener('input',()=>inp.dataset.t='1'));
+    const pimgBtn=$('#pimgBtn',modal);
+    if(pimgBtn) pimgBtn.onclick=()=>pickImage(dd=>{ collect(); draft.image=dd; $('.m-body',modal).innerHTML=bodyHtml(); wire(false); });
+    $$('[data-vimg]',modal).forEach(b=>b.onclick=()=>pickImage(dd=>{
+      collect(); const v=draft.variants.find(x=>x.id===b.dataset.vimg); if(v) v.img=dd;
+      $('.m-body',modal).innerHTML=bodyHtml(); wire(false);
+    }));
+  }
+  shell(existing?'修改商品':'新增商品', bodyHtml(),
+    `<button class="btn" data-x2>取消</button><button class="btn btn--primary" id="psave">儲存</button>`);
+  $('[data-x2]',modal).onclick=closeModal;
+  wire(true);
+  $('#psave',modal).onclick=async()=>{
+    collect();
+    const err=$('#perr',modal);
+    if(!draft.name){ err.textContent='請輸入品名'; err.classList.add('show'); return; }
+    if(draft.specs.some(s=>!s.name||!s.options.length)){ err.textContent='每個規格都需要名稱與至少一個選項'; err.classList.add('show'); return; }
+    if(existing && (productLocked(existing) || st.orders.some(o=>o.lines.some(l=>l.productId===existing.id||(l.productIds&&l.productIds.includes(existing.id)))))){
+      if(!await confirmDialog('此商品已有交易紀錄。修改不會影響既有訂單，確定儲存變更？','確定儲存','primary')) return;
+    }
+    if(draft.specs.length){ delete draft.stock; delete draft.initialStock; delete draft.sold; }
+    else draft.variants=[];
+    const arr=st.products, idx=arr.findIndex(p=>p.id===draft.id);
+    if(idx>=0) arr[idx]=draft; else arr.push(draft);
+    save(); closeModal(); render();
+  };
+}
+
+/* ----- bundle create / edit ----- */
+function openBundleModal(st,existing){
+  const locked = existing && bundleLocked(existing);
+  const draft = existing ? JSON.parse(JSON.stringify(existing)) : {id:uid(),name:'',price:0,components:[]};
+  const qmap={}; draft.components.forEach(c=>qmap[c.productId]=c.qty);
+  function bodyHtml(){
+    return `${locked?`<div class="lock-note">此套組已有交易紀錄，僅能調整售價；組成內容已鎖定。</div>`:''}
+      <div class="field"><label>套組名稱</label><input type="text" id="bname" value="${esc(draft.name)}" placeholder="例如：耳環＋貼紙優惠組" maxlength="40" ${locked?'disabled':''}></div>
+      <div class="field"><label>套組售價</label><input type="number" min="0" step="0.01" id="bprice" value="${draft.price}"></div>
+      <div class="field"><label>選擇組成商品與數量</label>
+        ${st.products.map(p=>`<div class="comp-row" data-pid="${p.id}">
+          <div class="comp-row__nm">${esc(p.name)}<small>${money(p.price)}${hasSpec(p)?' · 規格於收銀時選':''}</small></div>
+          <input type="number" min="0" data-cf="qty" value="${qmap[p.id]||0}" placeholder="0" ${locked?'disabled':''}>
+        </div>`).join('')}
+        <div class="hint">數量填 0 代表不含此商品。套組不設庫存，售出時扣除組成商品的庫存。</div>
+      </div>
+      <div class="err" id="berr"></div>`;
+  }
+  function collect(){
+    draft.name=$('#bname',modal).value.trim();
+    draft.price=parseFloat($('#bprice',modal).value)||0;
+    if(!locked){
+      draft.components=[];
+      $$('.comp-row',modal).forEach(row=>{
+        const q=Math.max(0,parseInt($('[data-cf="qty"]',row).value)||0);
+        if(q>0) draft.components.push({productId:row.dataset.pid,qty:q});
+      });
+    }
+  }
+  shell(existing?'修改套組':'新增套組',bodyHtml(),
+    `<button class="btn" data-x2>取消</button><button class="btn btn--primary" id="bsave">儲存</button>`);
+  $('[data-x2]',modal).onclick=closeModal;
+  $('#bname',modal).focus();
+  $('#bsave',modal).onclick=async()=>{
+    collect();
+    const err=$('#berr',modal);
+    if(!draft.name){ err.textContent='請輸入套組名稱'; err.classList.add('show'); return; }
+    if(!draft.components.length){ err.textContent='請至少選擇一個商品（數量大於 0）'; err.classList.add('show'); return; }
+    if(existing && bundleLocked(existing)){
+      if(!await confirmDialog('此套組已有交易紀錄。修改不會影響既有訂單，確定儲存？','確定儲存','primary')) return;
+    }
+    const arr=st.bundles, idx=arr.findIndex(b=>b.id===draft.id);
+    if(idx>=0) arr[idx]=draft; else arr.push(draft);
+    save(); closeModal(); render();
+  };
+}
+
+/* ----- add-to-cart sheet ----- */
+function openAddSheet(st,kind,id){
+  const isP = kind==='product';
+  const p = isP ? product(st,id) : null;
+  const b = isP ? null : bundle(st,id);
+  // selection state
+  let sel = {};   // product: {specId:option}   bundle: {compIndex:variantId}
+  let qty = 1;
+  if(isP && hasSpec(p)) p.specs.forEach(s=>sel[s.id]=s.options[0]);
+  if(!isP){
+    bundleComps(st,b).forEach((c,i)=>{
+      if(c.needsSpec){ const f=c.product.variants[0]?.id; sel[i]=Array.from({length:c.qty},()=>f); }
+    });
+  }
+
+  function resolvedPvP(){ // product variant id (or product id)
+    if(!hasSpec(p)) return p.id;
+    const v=variantByCombo(p,sel); return v?v.id:null;
+  }
+  function maxQty(){
+    if(isP){ const pv=resolvedPvP(); return pv?Math.max(0,pvRemaining(st,pv)):0; }
+    return Math.max(0,bundleMaxBuild(st,b,sel));
+  }
+  function bodyHtml(){
+    const mq=maxQty();
+    if(qty>mq) qty=Math.max(mq>0?1:0,mq);
+    if(qty<1 && mq>0) qty=1;
+    let hero, groups='';
+    if(isP){
+      const pv=resolvedPvP();
+      const v=hasSpec(p)?p.variants.find(x=>x.id===pv):null;
+      const img=(v&&v.img)||p.image||'';
+      hero=`<div class="sheet-hero">${img?`<img src="${img}" alt="">`:`<span class="ph">🏷️</span>`}
+        <div><div class="nm">${esc(p.name)}</div><div class="pr money">${money(p.price)}</div>
+        <div class="st">${mq>0?`可加入 ${mq} 件`:'此規格庫存不足'}</div></div></div>`;
+      if(hasSpec(p)) groups=p.specs.map(s=>`<div class="sel-group"><label>${esc(s.name)}</label>
+        <select data-sg="${s.id}">${s.options.map(o=>{
+          const test={...sel,[s.id]:o}; const vv=variantByCombo(p,test);
+          const rem=vv?pvRemaining(st,vv.id):0;
+          return `<option value="${esc(o)}" ${sel[s.id]===o?'selected':''} ${rem<=0?'disabled':''}>${esc(o)}${rem<=0?'（售罄）':''}</option>`;
+        }).join('')}</select></div>`).join('');
+    }else{
+      const comps=bundleComps(st,b);
+      hero=`<div class="sheet-hero"><span class="ph">🎁</span>
+        <div><div class="nm">${esc(b.name)}</div><div class="pr money">${money(b.price)}</div>
+        <div class="st">${comps.map(c=>(c.missing?'(缺)':c.product.name)+'×'+c.qty).join('、')}</div>
+        <div class="st">${mq>0?`可組 ${mq} 份`:'組成商品庫存不足'}</div></div></div>`;
+      groups=comps.map((c,i)=>{
+        if(!c.needsSpec) return '';
+        const arr=Array.isArray(sel[i])?sel[i]:[];
+        return `<div class="sel-group"><label>${esc(c.product.name)}${c.qty>1?` — 分別選 ${c.qty} 件的規格`:' 的規格'}</label>
+          ${arr.map((cur,j)=>`<select data-bg="${i}" data-bj="${j}" style="margin-bottom:6px">${c.product.variants.map(v=>{
+            const rem=pvRemaining(st,v.id);
+            return `<option value="${v.id}" ${cur===v.id?'selected':''} ${rem<=0?'disabled':''}>${esc(v.key)}${rem<=0?'（售罄）':''}</option>`;
+          }).join('')}</select>`).join('')}
+        </div>`;
+      }).join('');
+    }
+    return `${hero}${groups}
+      <div class="qty-pick"><span class="label">數量</span>
+        <div class="stepper">
+          <button data-q="-1" ${qty<=1?'disabled':''}>−</button><span class="q">${qty}</span>
+          <button data-q="1" ${qty>=mq?'disabled':''}>＋</button>
+        </div>
+      </div>`;
+  }
+  function wire(){
+    $$('[data-sg]',modal).forEach(se=>se.onchange=()=>{ sel[se.dataset.sg]=se.value; refresh(); });
+    $$('[data-bg]',modal).forEach(se=>se.onchange=()=>{
+      const i=+se.dataset.bg, j=+se.dataset.bj;
+      if(!Array.isArray(sel[i])) sel[i]=[];
+      sel[i][j]=se.value; refresh();
+    });
+    $$('[data-q]',modal).forEach(bn=>bn.onclick=()=>{ qty=Math.max(0,qty+ +bn.dataset.q); refresh(); });
+  }
+  function refresh(){ $('.m-body',modal).innerHTML=bodyHtml(); wire(); updateFoot(); }
+  function updateFoot(){ const mq=maxQty(); $('#addBtn',modal).disabled = mq<=0 || qty<=0; }
+
+  shell(isP?'加入購物車':'加入購物車（套組）', bodyHtml(),
+    `<button class="btn" data-x2>取消</button><button class="btn btn--primary" id="addBtn">加入購物車</button>`);
+  $('[data-x2]',modal).onclick=closeModal;
+  wire(); updateFoot();
+  $('#addBtn',modal).onclick=()=>{
+    const mq=maxQty(); if(mq<=0||qty<=0) return;
+    if(isP){
+      const pv=resolvedPvP(); if(!pv) return;
+      const ex=UI.cart.find(l=>l.kind==='product'&&l.pvId===pv);
+      if(ex) ex.qty=Math.min(ex.qty+qty, ex.qty+pvRemaining(st,pv));
+      else UI.cart.push({uid:uid(),kind:'product',pvId:pv,qty});
+    }else{
+      const picks={}; bundleComps(st,b).forEach((c,i)=>{ if(c.needsSpec) picks[i]=(sel[i]||[]).slice(); });
+      const ex=UI.cart.find(l=>l.kind==='bundle'&&l.bundleId===b.id&&JSON.stringify(l.picks)===JSON.stringify(picks));
+      if(ex) ex.qty+=qty; else UI.cart.push({uid:uid(),kind:'bundle',bundleId:b.id,picks,qty});
+    }
+    closeModal(); renderCheckout(st,$('#body'));
+  };
+}
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,2600); }
+
+/* ============================================================ SEED (first run) ============================================================ */
+function seed(){
+  const st={id:uid(),name:'夜市手作飾品攤（範例資料）',createdAt:Date.now()-86400000*2,cover:'',products:[],bundles:[],orders:[],income:0};
+  const earring={id:uid(),name:'手工耳環',image:'',price:180,specs:[],stock:24,initialStock:24,sold:0,variants:[]};
+  const sticker={id:uid(),name:'貼紙包',image:'',price:50,specs:[],stock:40,initialStock:40,sold:0,variants:[]};
+  const sid=uid();
+  const bag={id:uid(),name:'棉麻托特包',image:'',price:420,
+    specs:[{id:sid,name:'顏色',options:['米白','墨綠']}],
+    stock:0,initialStock:0,sold:0,
+    variants:[
+      {id:uid(),key:'米白',combo:{[sid]:'米白'},stock:8,initialStock:8,sold:0,img:''},
+      {id:uid(),key:'墨綠',combo:{[sid]:'墨綠'},stock:6,initialStock:6,sold:0,img:''},
+    ]};
+  delete bag.stock; delete bag.initialStock; delete bag.sold;
+  st.products.push(earring,bag,sticker);
+  const combo={id:uid(),name:'耳環＋貼紙 優惠組',price:200,components:[{productId:earring.id,qty:1},{productId:sticker.id,qty:1}]};
+  st.bundles.push(combo);
+  DB.stalls.push(st); UI.stallId=st.id;
+
+  const runs=[
+    [{kind:'product',pvId:earring.id,qty:2},{kind:'product',pvId:sticker.id,qty:1}],
+    [{kind:'bundle',bundleId:combo.id,picks:{},qty:1}],
+    [{kind:'product',pvId:bag.variants[1].id,qty:1},{kind:'product',pvId:earring.id,qty:1}],
+  ];
+  runs.forEach((lines,i)=>{ UI.cart=lines.map(l=>({uid:uid(),...l})); const o=applyPayment(st,false); o.time=Date.now()-(runs.length-i)*3600000*2; });
+  UI.cart=[]; UI.stallId=null;
+  save();
+}
+
+/* ============================================================ BOOT ============================================================ */
+if(!load()){ DB={stalls:[],settings:{accent:THEMES[0].hex}}; seed(); }
+applyTheme();
+render();
+
+/* ---------- PWA: offline service worker (only when served over https / localhost) ---------- */
+if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+</script>
