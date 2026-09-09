@@ -86,20 +86,27 @@
   .empty h3{color:var(--ink);font-size:15px;margin-bottom:5px}
 
   /* ---------- home ---------- */
-  .home{padding:16px 16px 60px}
+  .home{padding:0 16px 60px}
   .home-banner{
-    position:relative;width:100%;aspect-ratio:16/6;min-height:120px;max-height:220px;
-    border-radius:16px;overflow:hidden;background:var(--accent);cursor:pointer;
-    display:flex;align-items:flex-end;border:1px solid var(--line);box-shadow:var(--shadow);margin-bottom:14px
+    position:relative;margin:0 -16px 16px;
+    aspect-ratio:16/6;min-height:120px;max-height:250px;
+    overflow:hidden;background:var(--accent);cursor:pointer;
+    display:flex;align-items:flex-end;border-bottom:1px solid var(--line)
   }
   .home-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .home-banner__pal{
-    position:absolute;top:10px;right:10px;width:40px;height:40px;border-radius:12px;border:0;cursor:pointer;z-index:2;
+    position:absolute;top:calc(env(safe-area-inset-top) + 10px);right:14px;
+    width:40px;height:40px;border-radius:12px;border:0;cursor:pointer;z-index:2;
     background:rgba(255,255,255,.92);color:#1e2126;font-size:19px;display:flex;align-items:center;justify-content:center;
-    box-shadow:0 2px 8px rgba(0,0,0,.18)
+    box-shadow:0 2px 8px rgba(0,0,0,.25)
   }
-  .home-banner__hint{position:relative;z-index:1;color:var(--accent-on);opacity:.9;font-size:12.5px;font-weight:600;padding:11px 13px}
+  .home-banner__hint{position:relative;z-index:1;color:var(--accent-on);opacity:.9;font-size:12.5px;font-weight:600;padding:11px 15px}
   .newstall-btn{width:100%;min-height:60px;font-size:16px;margin-bottom:16px}
+
+  .goto-checkout{
+    position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:50;
+    padding-left:20px;padding-right:20px;box-shadow:0 8px 22px -6px rgba(0,0,0,.4)
+  }
 
   /* ---------- tile grid (home stalls + checkout items) ---------- */
   .tile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
@@ -253,6 +260,16 @@
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
 
+  .pie-wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .pie-wrap svg{flex-shrink:0}
+  .pie-legs{flex:1;min-width:180px;display:flex;flex-direction:column;gap:7px}
+  .pie-leg{display:flex;align-items:center;gap:8px;font-size:12.5px}
+  .pie-leg i{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+  .pie-leg .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pie-leg .vv{font-family:var(--ff-mono);color:var(--muted);flex-shrink:0}
+  .hchart{width:100%;overflow-x:auto}
+  .hchart svg{display:block;height:auto}
+
   .filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
   input[type=date],input[type=text],input[type=number],select{
     font-family:inherit;font-size:16px;padding:9px 10px;border-radius:9px;border:1px solid var(--line-strong);
@@ -389,7 +406,7 @@ const THEMES = [
 
 const STORE_KEY = 'stall-register-v2';
 let DB = { stalls:[], settings:{ accent:THEMES[0].hex } };
-let UI = { screen:'home', stallId:null, tab:'products', cart:[], stage:'catalog', free:false, openOrders:{}, dateFilter:'' };
+let UI = { screen:'home', stallId:null, tab:'products', cart:[], stage:'catalog', free:false, settleDetail:false, openOrders:{}, dateFilter:'' };
 
 /* ---------- persistence ---------- */
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){} }
@@ -410,6 +427,8 @@ function applyTheme(){
   const root=document.documentElement.style;
   root.setProperty('--accent',hex);
   root.setProperty('--accent-on', relLum(hex)>0.30 ? '#1e2126' : '#ffffff');
+  const mt=document.querySelector('meta[name="theme-color"]');
+  if(mt) mt.setAttribute('content',hex);          // 手機瀏覽器 / PWA 最上方狀態列顏色
 }
 
 /* ---------- image helpers ---------- */
@@ -779,7 +798,9 @@ function renderProducts(st,body){
     <div class="section-head"><h2>商品品項</h2><button class="btn btn--primary btn--sm" data-act="add-product">＋ 新增商品</button></div>
     ${st.products.length?`<div class="items">${prod}</div>`:`<div class="empty"><h3>尚無商品</h3>新增商品品項，可設定品名、圖片、價格、庫存與自訂規格。</div>`}
     <div class="section-head"><h2>套組品項</h2><button class="btn btn--primary btn--sm" data-act="add-bundle" ${st.products.length?'':'disabled'}>＋ 新增套組</button></div>
-    ${st.bundles.length?`<div class="items">${bund}</div>`:`<div class="empty"><h3>尚無套組</h3>挑數個商品組成套組並重新定價，規格於收銀加入購物車時再選。</div>`}`;
+    ${st.bundles.length?`<div class="items">${bund}</div>`:`<div class="empty"><h3>尚無套組</h3>挑數個商品組成套組並重新定價，規格於收銀加入購物車時再選。</div>`}
+    <div style="height:84px"></div>
+    <button class="btn btn--primary goto-checkout" data-act="tab" data-id="checkout">前往收銀頁面 →</button>`;
 }
 
 /* ---------------- CHECKOUT ---------------- */
@@ -861,6 +882,7 @@ function renderConfirm(st,body){
 /* ---------------- SETTLE ---------------- */
 function niceMax(v){ if(v<=0)return 10; const m=Math.pow(10,Math.floor(Math.log10(v))); const n=v/m; const s=n<=1?1:n<=2?2:n<=5?5:10; return s*m; }
 function renderSettle(st,body){
+  if(UI.settleDetail) return renderIncomeDetail(st,body);
   const per=st.products.map(p=>{
     if(hasSpec(p)){
       return {name:p.name,
@@ -878,30 +900,6 @@ function renderSettle(st,body){
       <div class="stat__big"><span class="cur">${d.cur}</span><span class="sep">/</span><span class="ini">${d.ini}</span></div>
       <div class="stat__bar"><i style="width:${pct}%"></i></div>
     </div>`;}).join('');
-
-  const cd=per.filter(d=>d.ini>0||d.sold>0);
-  let chart;
-  if(!cd.length){ chart=`<div class="empty" style="padding:22px">尚無庫存與銷售資料</div>`; }
-  else{
-    const max=niceMax(Math.max(...cd.map(d=>Math.max(d.ini,d.sold+d.cur))));
-    const gutter=118,rpad=82,rowH=30,gap=12,top=6,W=680,plotW=W-gutter-rpad;
-    const H=top+cd.length*(rowH+gap)+26;
-    const x=v=>gutter+(v/max)*plotW;
-    const ticks=[]; for(let i=0;i<=5;i++) ticks.push(max/5*i);
-    const grid=ticks.map(t=>`<line class="ck-grid" x1="${x(t).toFixed(1)}" y1="${top}" x2="${x(t).toFixed(1)}" y2="${top+cd.length*(rowH+gap)}"/><text class="ck-axis" x="${x(t).toFixed(1)}" y="${H-8}" text-anchor="middle">${Math.round(t)}</text>`).join('');
-    const bars=cd.map((d,i)=>{
-      const y=top+i*(rowH+gap);
-      const sw=Math.max(0,x(d.sold)-x(0)), rw=Math.max(0,x(d.sold+d.cur)-x(d.sold));
-      const g=sw>0&&rw>0?2:0;
-      return `<g>
-        <text class="ck-name" x="${gutter-10}" y="${y+rowH/2+4}" text-anchor="end">${esc(d.name.length>8?d.name.slice(0,8)+'…':d.name)}</text>
-        ${sw>0?`<rect class="ck-sold" x="${x(0).toFixed(1)}" y="${y}" width="${sw.toFixed(1)}" height="${rowH}" rx="4"/>`:''}
-        ${rw>0?`<rect class="ck-remain" x="${(x(d.sold)+g).toFixed(1)}" y="${y}" width="${Math.max(0,rw-g).toFixed(1)}" height="${rowH}" rx="4"/>`:''}
-        <text class="ck-val" x="${Math.min(x(d.sold+d.cur)+7,W-78).toFixed(1)}" y="${y+rowH/2+4}">售 ${d.sold}／初 ${d.ini}</text>
-      </g>`;}).join('');
-    chart=`<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="各品項初始庫存與銷量長條圖">${grid}${bars}</svg></div>
-      <div class="legend"><span><i style="background:var(--accent)"></i>已售出</span><span><i style="background:var(--accent-weak)"></i>剩餘庫存</span></div>`;
-  }
 
   const orders=st.orders.slice().sort((a,b)=>b.time-a.time);
   const oHtml=orders.length?orders.map(o=>`
@@ -922,17 +920,91 @@ function renderSettle(st,body){
   const freeCnt=st.orders.filter(o=>o.free).length;
 
   body.innerHTML=`
-    <div class="hero-income"><span class="label">目前收入總金額</span>
+    <div class="hero-income" role="button" tabindex="0" data-act="income-detail">
+      <span class="label">目前收入總金額　▸ 點看明細</span>
       <div class="amt">${money(st.income)}</div>
       <div class="sub">${st.orders.length} 筆訂單${freeCnt?`（含 ${freeCnt} 筆贈送）`:''} · 累計售出 ${totalSold} 件</div>
     </div>
-    <div class="section-head"><h2>現在庫存 / 初始庫存</h2></div>
+    <div class="section-head"><h2>庫存</h2></div>
     ${per.length?`<div class="stat-grid">${tiles}</div>`:`<div class="empty">尚無商品</div>`}
-    <div class="panel"><div class="panel__title">各品項初始庫存與銷量</div>${chart}</div>
     <div class="panel">
       <div class="panel__title">訂單紀錄 <span style="font-weight:400;color:var(--muted);margin-left:6px">共 ${orders.length} 筆</span></div>
       <div class="orders">${oHtml}</div>
     </div>`;
+}
+
+/* ---------- income detail: pie (revenue source) + bar (units sold) ---------- */
+function renderIncomeDetail(st,body){
+  const rev={};
+  st.orders.forEach(o=>{
+    if(o.free) return;
+    o.lines.forEach(l=>{
+      const key = l.kind==='bundle' ? 'b:'+(l.bundleId||l.name) : 'p:'+(l.productId||l.name);
+      if(!rev[key]) rev[key]={name:l.name,amount:0,kind:l.kind};
+      rev[key].amount += l.lineTotal||0;
+    });
+  });
+  const revArr=Object.values(rev).filter(r=>r.amount>0).sort((a,b)=>b.amount-a.amount);
+  const revTotal=revArr.reduce((a,r)=>a+r.amount,0);
+
+  const units=priceUnits(st)
+    .map(u=>({name:u.name+(u.detail?`（${u.detail}）`:''), sold:u.sold||0}))
+    .filter(u=>u.sold>0).sort((a,b)=>b.sold-a.sold);
+
+  body.innerHTML=`
+    <div class="section-head"><h2>收入明細</h2><button class="btn btn--ghost btn--sm" data-act="settle-back">← 返回</button></div>
+    <div class="hero-income" style="cursor:default">
+      <span class="label">目前收入總金額</span>
+      <div class="amt">${money(st.income)}</div>
+    </div>
+    <div class="panel">
+      <div class="panel__title">收入來源（商品 / 套組）</div>
+      ${revArr.length?pieSVG(revArr,revTotal):`<div class="empty" style="padding:20px">尚無收入</div>`}
+    </div>
+    <div class="panel">
+      <div class="panel__title">各品項銷量（含不同規格；套組售出併入商品）</div>
+      ${units.length?barSVG(units):`<div class="empty" style="padding:20px">尚無銷售</div>`}
+    </div>`;
+}
+const CHART_PAL=['#0f7a58','#2563eb','#c2410c','#7c3aed','#0891b2','#dc2626','#b45309','#4d7c0f','#9aa0a8'];
+function pieSVG(items,total){
+  let arr=items;
+  if(items.length>8){
+    const rest=items.slice(7).reduce((a,r)=>a+r.amount,0);
+    arr=[...items.slice(0,7),{name:'其他',amount:rest}];
+  }
+  const cx=90,cy=90,r=82;
+  let ang=-Math.PI/2;
+  const segs=arr.map((it,i)=>{
+    const frac=total>0?it.amount/total:0;
+    if(frac<=0) return '';
+    if(frac>=0.9999) return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${CHART_PAL[i%CHART_PAL.length]}"/>`;
+    const a2=ang+frac*Math.PI*2, large=frac>0.5?1:0;
+    const x1=cx+r*Math.cos(ang), y1=cy+r*Math.sin(ang);
+    const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+    ang=a2;
+    return `<path d="M ${cx} ${cy} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${CHART_PAL[i%CHART_PAL.length]}" stroke="var(--surface)" stroke-width="2"/>`;
+  }).join('');
+  const legend=arr.map((it,i)=>`<div class="pie-leg"><i style="background:${CHART_PAL[i%CHART_PAL.length]}"></i><span class="nm">${esc(it.name)}</span><span class="vv">${money(it.amount)} · ${total>0?Math.round(it.amount/total*100):0}%</span></div>`).join('');
+  return `<div class="pie-wrap"><svg viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="收入來源圓餅圖">${segs}</svg><div class="pie-legs">${legend}</div></div>`;
+}
+function barSVG(units){
+  const max=niceMax(Math.max(...units.map(u=>u.sold)));
+  const n=units.length, bw=42, gap=20, padL=36, padR=14, padT=12, padB=64, H=214;
+  const W=padL+padR+n*bw+(n-1)*gap;
+  const plotH=H-padT-padB;
+  const y=v=>padT+plotH-(v/max)*plotH;
+  const ticks=[]; for(let i=0;i<=4;i++) ticks.push(max/4*i);
+  const grid=ticks.map(t=>`<line class="ck-grid" x1="${padL}" y1="${y(t).toFixed(1)}" x2="${W-padR}" y2="${y(t).toFixed(1)}"/><text class="ck-axis" x="${padL-6}" y="${(y(t)+3).toFixed(1)}" text-anchor="end">${Math.round(t)}</text>`).join('');
+  const bars=units.map((u,i)=>{
+    const bx=padL+i*(bw+gap), bh=Math.max(0,(u.sold/max)*plotH), by=padT+plotH-bh;
+    const lab=u.name.length>7?u.name.slice(0,7)+'…':u.name;
+    return `<g>
+      <rect class="ck-sold" x="${bx}" y="${by.toFixed(1)}" width="${bw}" height="${bh.toFixed(1)}" rx="4"/>
+      <text class="ck-val" x="${bx+bw/2}" y="${(by-5).toFixed(1)}" text-anchor="middle">${u.sold}</text>
+      <text class="ck-name" x="${bx+bw/2}" y="${H-padB+16}" text-anchor="end" transform="rotate(-38 ${bx+bw/2} ${H-padB+16})">${esc(lab)}</text>
+    </g>`;}).join('');
+  return `<div class="hchart"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="各品項銷量長條圖">${grid}${bars}</svg></div>`;
 }
 
 /* ============================================================ EVENTS ============================================================ */
@@ -943,7 +1015,7 @@ app.addEventListener('click',async e=>{
   if(act==='new-stall') return openStallModal(null);
   if(act==='settings') return openSettings();
   if(act==='edit-banner'){ e.stopPropagation(); return pickImage(d=>{ DB.settings.homeBanner=d; save(); render(); }, true); }
-  if(act==='open-stall'){ UI.stallId=id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.openOrders={};UI.dateFilter=''; return render(); }
+  if(act==='open-stall'){ UI.stallId=id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.settleDetail=false;UI.openOrders={};UI.dateFilter=''; return render(); }
   if(act==='del-stall'){
     e.stopPropagation();
     const s=DB.stalls.find(x=>x.id===id);
@@ -954,7 +1026,9 @@ app.addEventListener('click',async e=>{
   }
   if(act==='back'){ save(); UI.screen='home';UI.stallId=null;UI.cart=[]; return render(); }
   if(act==='edit-stall') return openStallModal(st);
-  if(act==='tab'){ UI.tab=id; UI.stage='catalog'; return render(); }
+  if(act==='tab'){ UI.tab=id; UI.stage='catalog'; UI.settleDetail=false; return render(); }
+  if(act==='income-detail'){ UI.settleDetail=true; return render(); }
+  if(act==='settle-back'){ UI.settleDetail=false; return render(); }
 
   if(act==='add-product') return openProductModal(st,null);
   if(act==='edit-product') return openProductModal(st,product(st,id));
