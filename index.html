@@ -7,7 +7,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="攤位收銀台">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="512x512" href="logo.png">
 <link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="logo.png">
 <link rel="apple-touch-icon" href="icon.svg">
 <title>攤位收銀台</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,6 +46,7 @@
   img{max-width:100%}
   [hidden]{display:none!important}
   html,body{height:100%}
+  html{background:var(--bg);overflow-x:clip}
   body{
     margin:0;background:var(--bg);color:var(--ink);
     font-family:var(--ff-sans);font-size:15px;line-height:1.5;
@@ -88,25 +91,51 @@
   /* ---------- home ---------- */
   .home{padding:0 16px 60px}
   .home-banner{
-    position:relative;margin:0 -16px 16px;
-    aspect-ratio:16/6;min-height:120px;max-height:250px;
+    position:relative;margin:0 -16px 4px;
+    min-height:230px;
     overflow:hidden;background:var(--accent);cursor:pointer;
-    display:flex;align-items:flex-end;border-bottom:1px solid var(--line)
+    display:flex;flex-direction:column
   }
-  .home-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .home-banner__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  /* fade the picture (or the colour block) into the page background at the bottom */
+  .home-banner::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:62%;z-index:1;pointer-events:none;
+    background:linear-gradient(to bottom, rgba(245,245,240,0) 0%, var(--bg) 92%)
+  }
   .home-banner__pal{
-    position:absolute;top:calc(env(safe-area-inset-top) + 10px);right:14px;
-    width:40px;height:40px;border-radius:12px;border:0;cursor:pointer;z-index:2;
-    background:rgba(255,255,255,.92);color:#1e2126;font-size:19px;display:flex;align-items:center;justify-content:center;
-    box-shadow:0 2px 8px rgba(0,0,0,.25)
+    position:absolute;top:calc(env(safe-area-inset-top) + 12px);right:14px;
+    width:42px;height:42px;border-radius:12px;border:0;cursor:pointer;z-index:3;
+    background:rgba(255,255,255,.92);color:#1e2126;font-size:20px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 10px rgba(0,0,0,.3)
   }
-  .home-banner__hint{position:relative;z-index:1;color:var(--accent-on);opacity:.9;font-size:12.5px;font-weight:600;padding:11px 15px}
-  .newstall-btn{width:100%;min-height:60px;font-size:16px;margin-bottom:16px}
+  .home-title{
+    align-self:flex-start;position:relative;z-index:3;
+    margin:calc(env(safe-area-inset-top) + 14px) 0 0 4px;
+    width:fit-content;min-width:6em;max-width:calc(100% - 76px);
+    font-size:26px;font-weight:800;line-height:1.25;letter-spacing:-.01em;color:#fff;
+    text-shadow:0 1px 10px rgba(0,0,0,.45);outline:0;min-height:1.3em;
+    word-break:break-word;cursor:text
+  }
+  .home-title:empty::before{content:attr(data-ph);opacity:.75;font-weight:700}
+  .home-title:focus{background:rgba(0,0,0,.28);border-radius:8px;padding:2px 6px;margin-left:-2px}
+  .home-banner__hint{
+    position:absolute;left:14px;bottom:14px;z-index:2;pointer-events:none;
+    color:#fff;opacity:.85;font-size:12px;font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.4)
+  }
+
+  .newstall-btn{
+    width:100%;min-height:62px;font-size:17px;font-weight:700;
+    margin:26px 0 18px;border:1.5px solid rgba(255,255,255,.85);
+    box-shadow:0 4px 18px -6px rgba(0,0,0,.28)
+  }
 
   .goto-checkout{
-    position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:50;
-    padding-left:20px;padding-right:20px;box-shadow:0 8px 22px -6px rgba(0,0,0,.4)
+    position:fixed;right:16px;bottom:calc(30px + env(safe-area-inset-bottom));z-index:50;
+    width:104px;height:104px;border-radius:22px;padding:0;
+    flex-direction:column;gap:2px;font-size:16px;font-weight:800;line-height:1.15;
+    box-shadow:0 10px 26px -6px rgba(0,0,0,.45)
   }
+  .goto-checkout .ar{font-size:22px;line-height:1}
 
   /* ---------- tile grid (home stalls + checkout items) ---------- */
   .tile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
@@ -219,9 +248,10 @@
     display:flex;align-items:center;gap:12px;box-shadow:0 -6px 20px -16px rgba(0,0,0,.35)
   }
   .checkout-foot__s{flex:1;min-width:0}
-  .checkout-foot__s .label{display:block;margin-bottom:1px}
-  .checkout-foot__t{font-family:var(--ff-mono);font-size:21px;font-weight:700;letter-spacing:-.02em}
-  .checkout-foot__c{font-size:11.5px;color:var(--muted)}
+  .checkout-foot__s .label{display:block;margin-bottom:1px;font-size:12px}
+  .checkout-foot__t{font-family:var(--ff-mono);font-size:25px;font-weight:700;letter-spacing:-.02em}
+  .checkout-foot__c{font-size:12.5px;color:var(--muted)}
+  .checkout-foot .btn{min-height:58px;font-size:18px;font-weight:800;padding:0 24px;border-radius:13px}
 
   .free-toggle{
     display:flex;align-items:center;gap:11px;padding:13px 14px;border:1px solid var(--line-strong);
@@ -363,7 +393,71 @@
     max-width:calc(100% - 32px);text-align:center;animation:tin .2s ease
   }
   @keyframes tin{from{opacity:0;transform:translate(-50%,8px)}}
-  @media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}
+
+  /* ---------- bigger type inside a stall ---------- */
+  .stall{font-size:16px}
+  .stall__title{font-size:17px}
+  .stall .tab{font-size:15.5px}
+  .stall .section-head h2{font-size:18px}
+  .stall .item__name{font-size:23px;font-weight:750;line-height:1.25;white-space:normal}
+  .stall .item__sub{font-size:13.5px;margin-top:4px}
+  .stall .item__price{font-size:16px;margin-top:6px}
+  .stall .vlines div{font-size:13.5px}
+  .stall .chip{font-size:12.5px;padding:3px 9px}
+  .stall .tile__nm{font-size:15px}
+  .stall .tile__meta{font-size:12.5px}
+  .stall .co-row__info .nm,.stall .sheet-hero .nm{font-size:16px}
+  .stall .cart-line__nm{font-size:15.5px}
+  .stall .cart-line__d{font-size:12.5px}
+  .stall .cart-line__sub{font-size:15px;min-width:66px}
+  .stall .stat__nm{font-size:14px}
+  .stall .order__line{font-size:13.5px}
+
+  /* ---------- page slide transitions ---------- */
+  .screen-anim{will-change:transform,opacity}
+  @keyframes slideInR{from{transform:translateX(100%)}to{transform:translateX(0)}}
+  @keyframes slideOutR{from{transform:translateX(0)}to{transform:translateX(100%)}}
+  @keyframes slideInL{from{transform:translateX(-24%);opacity:.6}to{transform:translateX(0);opacity:1}}
+  .anim-in-right{animation:slideInR .28s cubic-bezier(.22,.61,.36,1) both}
+  .anim-out-right{animation:slideOutR .26s cubic-bezier(.4,0,.7,.4) both}
+  .anim-in-left{animation:slideInL .26s ease both}
+  .slide-layer{position:fixed;inset:0;z-index:70;background:var(--bg)}
+
+  /* ---------- slide-up confirm ---------- */
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .anim-up{animation:slideUp .3s cubic-bezier(.22,.61,.36,1) both}
+
+  /* ---------- big success check ---------- */
+  .bigcheck{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;background:rgba(20,22,26,.28)}
+  .bigcheck svg{width:min(52vw,220px);height:min(52vw,220px)}
+  .bigcheck circle{fill:var(--accent)}
+  .bigcheck .tick{fill:none;stroke:#fff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:120;stroke-dashoffset:120;animation:tickdraw .38s .12s ease forwards}
+  .bigcheck .pop{animation:popin .3s cubic-bezier(.2,1.4,.4,1) both}
+  @keyframes popin{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes tickdraw{to{stroke-dashoffset:0}}
+
+  /* ---------- full-screen overlay page (income detail) ---------- */
+  .fs-page{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column}
+  .fs-page__top{position:sticky;top:0;display:flex;align-items:center;gap:10px;
+    padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;border-bottom:1px solid var(--line);background:var(--bg)}
+  .fs-page__top h2{font-size:18px;font-weight:700}
+  .fs-page__body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 48px}
+
+  /* ---------- floating stock popup ---------- */
+  .pop-dim{position:fixed;inset:0;z-index:100;background:rgba(20,22,26,.42);display:flex;align-items:center;justify-content:center;padding:20px;animation:tin2 .15s ease}
+  @keyframes tin2{from{opacity:0}}
+  .pop-card{background:var(--surface);border-radius:16px;box-shadow:0 24px 70px -18px rgba(0,0,0,.5);max-width:420px;width:100%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;animation:popin .22s cubic-bezier(.2,1.2,.4,1) both}
+  .pop-card__h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .pop-card__h h3{font-size:16px;font-weight:700}
+  .pop-card__b{padding:14px 16px;overflow-y:auto}
+  .stat--tap{cursor:pointer}
+  .stat--tap:active{transform:translateY(1px)}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001s!important;transition-duration:.001s!important}
+    .anim-in-right,.anim-out-right,.anim-in-left,.anim-up{animation:none!important}
+  }
 
   /* ---------- image cropper ---------- */
   dialog#cropper{border:0;padding:0;margin:0;background:transparent;width:100vw;height:100vh;max-width:100vw;max-height:100vh}
@@ -406,7 +500,7 @@ const THEMES = [
 
 const STORE_KEY = 'stall-register-v2';
 let DB = { stalls:[], settings:{ accent:THEMES[0].hex } };
-let UI = { screen:'home', stallId:null, tab:'products', cart:[], stage:'catalog', free:false, settleDetail:false, openOrders:{}, dateFilter:'' };
+let UI = { screen:'home', stallId:null, tab:'products', cart:[], stage:'catalog', free:false, openOrders:{}, dateFilter:'' };
 
 /* ---------- persistence ---------- */
 function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){} }
@@ -427,8 +521,13 @@ function applyTheme(){
   const root=document.documentElement.style;
   root.setProperty('--accent',hex);
   root.setProperty('--accent-on', relLum(hex)>0.30 ? '#1e2126' : '#ffffff');
-  const mt=document.querySelector('meta[name="theme-color"]');
-  if(mt) mt.setAttribute('content',hex);          // 手機瀏覽器 / PWA 最上方狀態列顏色
+  // 手機瀏覽器 / PWA 最上方狀態列顏色 —— 更新所有 theme-color meta（沒有就補一個）
+  let metas=document.querySelectorAll('meta[name="theme-color"]');
+  if(!metas.length){
+    const m=document.createElement('meta'); m.name='theme-color';
+    (document.head||document.documentElement).appendChild(m); metas=[m];
+  }
+  metas.forEach(m=>m.setAttribute('content',hex));
 }
 
 /* ---------- image helpers ---------- */
@@ -707,6 +806,36 @@ function deleteOrder(st,oid){
 const app=$('#app');
 function render(){ UI.screen==='home' ? renderHome() : renderStall(); }
 
+const reduceMotion = ()=>window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+const ANIMS=['anim-in-right','anim-out-right','anim-in-left','anim-up'];
+function animOnce(el,cls){ ANIMS.forEach(c=>el.classList.remove(c)); void el.offsetWidth; el.classList.add(cls); el.addEventListener('animationend',()=>el.classList.remove(cls),{once:true}); }
+/* forward nav: new screen slides in from the right */
+function goForward(mutate){
+  mutate(); render();
+  if(!reduceMotion()) animOnce(app,'anim-in-right');
+}
+/* back nav: current screen slides out to the right, then new screen eases in from the left */
+function goBack(mutate){
+  if(reduceMotion()){ mutate(); render(); return; }
+  let done=false;
+  const finish=()=>{
+    if(done) return; done=true;
+    app.classList.remove('anim-out-right');
+    mutate(); render();
+    animOnce(app,'anim-in-left');
+  };
+  app.addEventListener('animationend',finish,{once:true});
+  setTimeout(finish,420);
+  app.classList.add('anim-out-right');
+}
+function bigCheck(){
+  const ov=document.createElement('div');
+  ov.className='bigcheck';
+  ov.innerHTML=`<svg viewBox="0 0 120 120" class="pop"><circle cx="60" cy="60" r="54"/><path class="tick" d="M37 61 L53 78 L84 43"/></svg>`;
+  document.body.appendChild(ov);
+  setTimeout(()=>{ ov.style.transition='opacity .22s'; ov.style.opacity='0'; setTimeout(()=>ov.remove(),240); }, 950);
+}
+
 /* ---------------- HOME ---------------- */
 function renderHome(){
   const tiles = DB.stalls.slice().sort((a,b)=>b.createdAt-a.createdAt).map(s=>`
@@ -720,15 +849,29 @@ function renderHome(){
     </div>`).join('');
 
   const banner=DB.settings.homeBanner||'';
+  const htitle=DB.settings.homeTitle||'';
   app.innerHTML=`<div class="home">
-    <div class="home-banner" role="button" tabindex="0" data-act="edit-banner">
-      ${banner?`<img src="${banner}" alt="">`:''}
+    <div class="home-banner" data-act="edit-banner">
+      ${banner?`<img class="home-banner__img" src="${banner}" alt="">`:''}
       <button class="home-banner__pal" data-act="settings" aria-label="佈景與主題色">🎨</button>
-      ${banner?'':`<span class="home-banner__hint">點這裡放上封面圖</span>`}
+      <div class="home-title" id="homeTitle" contenteditable="true" role="textbox"
+           aria-label="標題" data-ph="點這裡輸入標題">${esc(htitle)}</div>
+      ${banner?'':`<span class="home-banner__hint">點封面任一處可換圖</span>`}
     </div>
     <button class="btn btn--primary newstall-btn" data-act="new-stall">＋ 建立新攤位</button>
     ${DB.stalls.length?`<div class="tile-grid">${tiles}</div>`:`<div class="empty">還沒有任何攤位，點上方按鈕開始。</div>`}
   </div>`;
+  const ht=$('#homeTitle');
+  if(ht){
+    const commit=()=>{
+      let v=(ht.textContent||'').replace(/\s*\n\s*/g,' ').trim().slice(0,40);
+      DB.settings.homeTitle=v; save();
+      if(!v) ht.innerHTML='';
+    };
+    ht.addEventListener('input',commit);
+    ht.addEventListener('blur',commit);
+    ht.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); ht.blur(); } });
+  }
 }
 
 /* ---------------- STALL SHELL ---------------- */
@@ -799,8 +942,8 @@ function renderProducts(st,body){
     ${st.products.length?`<div class="items">${prod}</div>`:`<div class="empty"><h3>尚無商品</h3>新增商品品項，可設定品名、圖片、價格、庫存與自訂規格。</div>`}
     <div class="section-head"><h2>套組品項</h2><button class="btn btn--primary btn--sm" data-act="add-bundle" ${st.products.length?'':'disabled'}>＋ 新增套組</button></div>
     ${st.bundles.length?`<div class="items">${bund}</div>`:`<div class="empty"><h3>尚無套組</h3>挑數個商品組成套組並重新定價，規格於收銀加入購物車時再選。</div>`}
-    <div style="height:84px"></div>
-    <button class="btn btn--primary goto-checkout" data-act="tab" data-id="checkout">前往收銀頁面 →</button>`;
+    <div style="height:170px"></div>
+    <button class="btn btn--primary goto-checkout" data-act="tab" data-id="checkout"><span class="ar">🛒</span><span>前往收銀</span></button>`;
 }
 
 /* ---------------- CHECKOUT ---------------- */
@@ -882,21 +1025,21 @@ function renderConfirm(st,body){
 /* ---------------- SETTLE ---------------- */
 function niceMax(v){ if(v<=0)return 10; const m=Math.pow(10,Math.floor(Math.log10(v))); const n=v/m; const s=n<=1?1:n<=2?2:n<=5?5:10; return s*m; }
 function renderSettle(st,body){
-  if(UI.settleDetail) return renderIncomeDetail(st,body);
   const per=st.products.map(p=>{
-    if(hasSpec(p)){
-      return {name:p.name,
+    const spec=hasSpec(p);
+    if(spec){
+      return {p,spec,name:p.name,
         cur:p.variants.reduce((a,v)=>a+v.stock,0),
         ini:p.variants.reduce((a,v)=>a+v.initialStock,0),
         sold:p.variants.reduce((a,v)=>a+(v.sold||0),0)};
     }
-    return {name:p.name,cur:p.stock,ini:p.initialStock,sold:p.sold||0};
+    return {p,spec,name:p.name,cur:p.stock,ini:p.initialStock,sold:p.sold||0};
   });
 
   const tiles=per.map(d=>{
     const pct=d.ini>0?Math.max(0,Math.min(100,d.cur/d.ini*100)):0;
-    return `<div class="stat ${d.cur<=0?'is-out':''}">
-      <div class="stat__nm">${esc(d.name)}</div>
+    return `<div class="stat ${d.cur<=0?'is-out':''} ${d.spec?'stat--tap':''}" ${d.spec?`role="button" tabindex="0" data-act="stock-detail" data-id="${d.p.id}"`:''}>
+      <div class="stat__nm">${esc(d.name)}${d.spec?' <span class="chip" style="font-size:10px">點看規格</span>':''}</div>
       <div class="stat__big"><span class="cur">${d.cur}</span><span class="sep">/</span><span class="ini">${d.ini}</span></div>
       <div class="stat__bar"><i style="width:${pct}%"></i></div>
     </div>`;}).join('');
@@ -933,38 +1076,73 @@ function renderSettle(st,body){
     </div>`;
 }
 
-/* ---------- income detail: pie (revenue source) + bar (units sold) ---------- */
-function renderIncomeDetail(st,body){
+/* ---------- income detail: full-screen overlay, pie + bar ---------- */
+function openIncomeDetail(st){
   const rev={};
   st.orders.forEach(o=>{
     if(o.free) return;
     o.lines.forEach(l=>{
       const key = l.kind==='bundle' ? 'b:'+(l.bundleId||l.name) : 'p:'+(l.productId||l.name);
-      if(!rev[key]) rev[key]={name:l.name,amount:0,kind:l.kind};
+      if(!rev[key]) rev[key]={name:l.name,amount:0};
       rev[key].amount += l.lineTotal||0;
     });
   });
   const revArr=Object.values(rev).filter(r=>r.amount>0).sort((a,b)=>b.amount-a.amount);
   const revTotal=revArr.reduce((a,r)=>a+r.amount,0);
-
   const units=priceUnits(st)
     .map(u=>({name:u.name+(u.detail?`（${u.detail}）`:''), sold:u.sold||0}))
     .filter(u=>u.sold>0).sort((a,b)=>b.sold-a.sold);
 
-  body.innerHTML=`
-    <div class="section-head"><h2>收入明細</h2><button class="btn btn--ghost btn--sm" data-act="settle-back">← 返回</button></div>
-    <div class="hero-income" style="cursor:default">
-      <span class="label">目前收入總金額</span>
-      <div class="amt">${money(st.income)}</div>
+  const ov=document.createElement('div');
+  ov.className='fs-page anim-in-right';
+  ov.innerHTML=`
+    <div class="fs-page__top">
+      <button class="btn btn--ghost btn--sm" id="fsBack">← 返回</button>
+      <h2>收入明細</h2>
     </div>
-    <div class="panel">
-      <div class="panel__title">收入來源（商品 / 套組）</div>
-      ${revArr.length?pieSVG(revArr,revTotal):`<div class="empty" style="padding:20px">尚無收入</div>`}
-    </div>
-    <div class="panel">
-      <div class="panel__title">各品項銷量（含不同規格；套組售出併入商品）</div>
-      ${units.length?barSVG(units):`<div class="empty" style="padding:20px">尚無銷售</div>`}
+    <div class="fs-page__body">
+      <div class="hero-income" style="cursor:default">
+        <span class="label">目前收入總金額</span>
+        <div class="amt">${money(st.income)}</div>
+      </div>
+      <div class="panel">
+        <div class="panel__title">收入來源（商品 / 套組）</div>
+        ${revArr.length?pieSVG(revArr,revTotal):`<div class="empty" style="padding:20px">尚無收入</div>`}
+      </div>
+      <div class="panel">
+        <div class="panel__title">各品項銷量（含不同規格；套組售出併入商品）</div>
+        ${units.length?barSVG(units):`<div class="empty" style="padding:20px">尚無銷售</div>`}
+      </div>
     </div>`;
+  document.body.appendChild(ov);
+  let closed=false;
+  const close=()=>{
+    if(closed) return; closed=true;
+    if(reduceMotion()){ ov.remove(); return; }
+    ov.classList.remove('anim-in-right'); ov.classList.add('anim-out-right');
+    const kill=()=>ov.remove();
+    ov.addEventListener('animationend',kill,{once:true});
+    setTimeout(kill,360);
+  };
+  ov.querySelector('#fsBack').onclick=close;
+}
+function openStockPopup(p){
+  const rows=p.variants.map(v=>{
+    const pct=v.initialStock>0?Math.max(0,Math.min(100,v.stock/v.initialStock*100)):0;
+    return `<div class="stat ${v.stock<=0?'is-out':''}" style="margin-bottom:10px">
+      <div class="stat__nm">${esc(v.key)}</div>
+      <div class="stat__big"><span class="cur">${v.stock}</span><span class="sep">/</span><span class="ini">${v.initialStock}</span></div>
+      <div class="stat__bar"><i style="width:${pct}%"></i></div>
+    </div>`;}).join('');
+  const ov=document.createElement('div'); ov.className='pop-dim';
+  ov.innerHTML=`<div class="pop-card">
+    <div class="pop-card__h"><h3>${esc(p.name)}　各規格庫存</h3><button class="btn btn--ghost btn--sm" data-x>✕</button></div>
+    <div class="pop-card__b">${rows}</div>
+  </div>`;
+  document.body.appendChild(ov);
+  const close=()=>ov.remove();
+  ov.addEventListener('click',e=>{ if(e.target===ov) close(); });
+  ov.querySelector('[data-x]').onclick=close;
 }
 const CHART_PAL=['#0f7a58','#2563eb','#c2410c','#7c3aed','#0891b2','#dc2626','#b45309','#4d7c0f','#9aa0a8'];
 function pieSVG(items,total){
@@ -1014,8 +1192,11 @@ app.addEventListener('click',async e=>{
 
   if(act==='new-stall') return openStallModal(null);
   if(act==='settings') return openSettings();
-  if(act==='edit-banner'){ e.stopPropagation(); return pickImage(d=>{ DB.settings.homeBanner=d; save(); render(); }, true); }
-  if(act==='open-stall'){ UI.stallId=id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.settleDetail=false;UI.openOrders={};UI.dateFilter=''; return render(); }
+  if(act==='edit-banner'){
+    if(e.target.closest('#homeTitle')) return;   // 點在標題上是編輯文字，不換圖
+    return pickImage(d=>{ DB.settings.homeBanner=d; save(); render(); }, true);
+  }
+  if(act==='open-stall'){ return goForward(()=>{ UI.stallId=id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.openOrders={};UI.dateFilter=''; }); }
   if(act==='del-stall'){
     e.stopPropagation();
     const s=DB.stalls.find(x=>x.id===id);
@@ -1024,11 +1205,11 @@ app.addEventListener('click',async e=>{
     }
     return;
   }
-  if(act==='back'){ save(); UI.screen='home';UI.stallId=null;UI.cart=[]; return render(); }
+  if(act==='back'){ return goBack(()=>{ save(); UI.screen='home';UI.stallId=null;UI.cart=[];UI.stage='catalog'; }); }
   if(act==='edit-stall') return openStallModal(st);
-  if(act==='tab'){ UI.tab=id; UI.stage='catalog'; UI.settleDetail=false; return render(); }
-  if(act==='income-detail'){ UI.settleDetail=true; return render(); }
-  if(act==='settle-back'){ UI.settleDetail=false; return render(); }
+  if(act==='tab'){ UI.tab=id; UI.stage='catalog'; return render(); }
+  if(act==='income-detail') return openIncomeDetail(st);
+  if(act==='stock-detail'){ const p=product(st,id); if(p) openStockPopup(p); return; }
 
   if(act==='add-product') return openProductModal(st,null);
   if(act==='edit-product') return openProductModal(st,product(st,id));
@@ -1061,15 +1242,19 @@ app.addEventListener('click',async e=>{
     renderCheckout(st,$('#body')); return;
   }
   if(act==='line-del'){ UI.cart=UI.cart.filter(x=>x.uid!==t.dataset.uid); renderCheckout(st,$('#body')); return; }
-  if(act==='go-confirm'){ UI.stage='confirm'; return renderCheckout(st,$('#body')); }
+  if(act==='go-confirm'){
+    UI.stage='confirm'; renderCheckout(st,$('#body'));
+    if(!reduceMotion()){ const b=$('#body'); if(b) animOnce(b,'anim-up'); }
+    return;
+  }
   if(act==='back-catalog'){ UI.stage='catalog'; return renderCheckout(st,$('#body')); }
   if(act==='toggle-free'){ UI.free = (typeof t.checked==='boolean') ? t.checked : !UI.free; return renderCheckout(st,$('#body')); }
   if(act==='confirm-pay'){
     if(!UI.cart.length) return;
-    const ord=applyPayment(st,UI.free);
-    UI.cart=[]; UI.stage='catalog'; const wasFree=UI.free; UI.free=false;
+    applyPayment(st,UI.free);
+    UI.cart=[]; UI.stage='catalog'; UI.free=false;
     render();
-    toast(wasFree?`已記錄贈送訂單，庫存已扣除`:`已收款 ${money(ord.total)}，庫存與收入已更新`);
+    bigCheck();
     return;
   }
 
@@ -1151,11 +1336,10 @@ function openStallModal(existing){
   $('#ssave',modal).onclick=()=>{
     const name=$('#snm',modal).value.trim();
     if(!name){ const er=$('#serr',modal); er.textContent='請輸入攤位名稱'; er.classList.add('show'); return; }
-    if(existing){ const s=stall(); s.name=name; s.cover=draft.cover; }
-    else{ DB.stalls.push({id:draft.id,name,createdAt:Date.now(),cover:draft.cover,products:[],bundles:[],orders:[],income:0}); }
+    if(existing){ const s=stall(); s.name=name; s.cover=draft.cover; save(); closeModal(); render(); return; }
+    DB.stalls.push({id:draft.id,name,createdAt:Date.now(),cover:draft.cover,products:[],bundles:[],orders:[],income:0});
     save(); closeModal();
-    if(!existing){ UI.stallId=draft.id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.openOrders={};UI.dateFilter=''; }
-    render();
+    goForward(()=>{ UI.stallId=draft.id;UI.screen='stall';UI.tab='products';UI.cart=[];UI.stage='catalog';UI.free=false;UI.openOrders={};UI.dateFilter=''; });
   };
 }
 
@@ -1472,6 +1656,8 @@ function seed(){
 if(!load()){ DB={stalls:[],settings:{accent:THEMES[0].hex}}; seed(); }
 applyTheme();
 render();
+window.addEventListener('pageshow',applyTheme);
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) applyTheme(); });
 
 /* ---------- PWA: offline service worker (only when served over https / localhost) ---------- */
 if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
