@@ -110,18 +110,20 @@
   }
   .home-title{
     align-self:center;text-align:center;position:relative;z-index:3;
-    margin:calc(env(safe-area-inset-top) + 62px) auto 0;
+    margin:calc(env(safe-area-inset-top) + 54px) auto 0;
     width:fit-content;min-width:6em;max-width:calc(100% - 40px);
+    padding:9px 14px;border-radius:9px;
     font-size:26px;font-weight:800;line-height:1.25;letter-spacing:-.01em;color:#fff;
     text-shadow:0 1px 10px rgba(0,0,0,.45);outline:0;min-height:1.3em;
     word-break:break-word;cursor:text
   }
   .home-title:empty::before{content:attr(data-ph);opacity:.75;font-weight:700}
-  .home-title:focus{background:rgba(0,0,0,.28);border-radius:8px;padding:2px 6px;margin-left:-2px}
+  .home-title:focus{background:rgba(0,0,0,.32)}
   .home-banner__hint{
     position:absolute;left:14px;bottom:14px;z-index:2;pointer-events:none;
     color:#fff;opacity:.85;font-size:12px;font-weight:600;text-shadow:0 1px 6px rgba(0,0,0,.4)
   }
+  .home-credit{margin-top:22px;text-align:right;font-size:11px;color:var(--faint)}
 
   .newstall-btn{
     width:100%;min-height:62px;font-size:17px;font-weight:700;
@@ -872,6 +874,7 @@ function renderHome(){
     </div>
     <button class="btn btn--primary newstall-btn" data-act="new-stall">＋ 建立新攤位</button>
     ${DB.stalls.length?`<div class="tile-grid">${tiles}</div>`:`<div class="empty">還沒有任何攤位，點上方按鈕開始。</div>`}
+    <div class="home-credit">create by @nekohige0123</div>
   </div>`;
   const ht=$('#homeTitle');
   if(ht){
