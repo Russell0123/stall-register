@@ -109,9 +109,9 @@
     box-shadow:0 2px 10px rgba(0,0,0,.3)
   }
   .home-title{
-    align-self:flex-start;position:relative;z-index:3;
-    margin:calc(env(safe-area-inset-top) + 14px) 0 0 4px;
-    width:fit-content;min-width:6em;max-width:calc(100% - 76px);
+    align-self:center;text-align:center;position:relative;z-index:3;
+    margin:calc(env(safe-area-inset-top) + 62px) auto 0;
+    width:fit-content;min-width:6em;max-width:calc(100% - 40px);
     font-size:26px;font-weight:800;line-height:1.25;letter-spacing:-.01em;color:#fff;
     text-shadow:0 1px 10px rgba(0,0,0,.45);outline:0;min-height:1.3em;
     word-break:break-word;cursor:text
@@ -125,7 +125,7 @@
 
   .newstall-btn{
     width:100%;min-height:62px;font-size:17px;font-weight:700;
-    margin:26px 0 18px;border:1.5px solid rgba(255,255,255,.85);
+    margin:26px 0 18px;
     box-shadow:0 4px 18px -6px rgba(0,0,0,.28)
   }
 
@@ -151,7 +151,7 @@
   .tile__cap{position:relative;background:var(--surface);border-top:1px solid var(--line);padding:9px 11px}
   .tile__nm{font-weight:650;font-size:13px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tile__meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
-  .tile__meta .mo{font-family:var(--ff-mono);color:var(--ink)}
+  .tile__meta .mo{font-family:var(--ff-mono);color:var(--ink);font-size:13.5px;font-weight:700}
   .tile.is-out{opacity:.5;filter:grayscale(.85);pointer-events:none}
   .tile__badge{
     position:absolute;top:7px;left:7px;font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:999px;
@@ -262,6 +262,12 @@
   .free-toggle small{display:block;color:var(--muted);font-size:11.5px;font-weight:400;margin-top:1px}
   .free-toggle.on{border-color:var(--accent);background:var(--accent-weak)}
 
+  .reserve-toggle{
+    display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--warn-weak);
+    border-radius:10px;background:var(--warn-weak);cursor:pointer;margin-top:4px;font-size:12.5px;color:var(--warn)
+  }
+  .reserve-toggle input{width:18px;height:18px;accent-color:var(--warn);flex-shrink:0}
+
   /* ---------- settle ---------- */
   .hero-income{background:var(--accent);color:var(--accent-on);border-radius:var(--radius);padding:19px 20px;margin-bottom:20px;box-shadow:var(--shadow)}
   .hero-income .label{color:var(--accent-on);opacity:.82}
@@ -274,8 +280,9 @@
   .stat__big{font-family:var(--ff-mono);font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:5px;line-height:1}
   .stat__big .cur{color:var(--ink)} .stat__big .sep{color:var(--faint);margin:0 3px;font-weight:400} .stat__big .ini{color:var(--faint)}
   .stat.is-out .stat__big .cur{color:var(--danger)}
-  .stat__bar{height:5px;border-radius:3px;background:var(--surface-2);margin-top:9px;overflow:hidden}
-  .stat__bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+  .stat__bar{position:relative;height:5px;border-radius:3px;background:var(--surface-2);margin-top:9px;overflow:visible}
+  .stat__bar i{display:block;height:100%;background:var(--accent);border-radius:3px;overflow:hidden}
+  .stat__resmark{position:absolute;top:-2px;bottom:-2px;width:0;border-left:2px dashed var(--warn);pointer-events:none}
 
   .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 15px 17px;box-shadow:var(--shadow);margin-top:16px}
   .panel__title{font-size:14px;font-weight:700;margin-bottom:12px}
@@ -347,13 +354,15 @@
   .img-drop span{font-size:12.5px;color:var(--muted)}
   .spec-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start}
   .spec-row .field{margin:0}.spec-row .k{width:34%}.spec-row .v{flex:1}
+  .spec-row .field>label{font-size:10.5px;margin-bottom:3px}
+  .spec-row__del{margin-top:21px}
   .vtable{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:4px}
-  .vrow{display:flex;align-items:center;gap:8px;padding:8px 10px;border-top:1px solid var(--line)}
+  .vrow{display:flex;align-items:center;gap:6px;padding:8px 10px;border-top:1px solid var(--line)}
   .vrow:first-child{border-top:0;background:var(--surface-2)}
   .vrow .vn{flex:1;font-size:13px;font-weight:600;min-width:0}
   .vrow .hh{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-  .vrow input{width:72px}
-  .vrow .hh.w{width:72px;text-align:center}
+  .vrow input{width:58px;padding-left:6px;padding-right:6px}
+  .vrow .hh.w{width:58px;text-align:center}
   .vimg-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
   .vimg{display:flex;align-items:center;gap:10px;font-size:12.5px}
   .vimg img,.vimg .ph{width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--faint);flex-shrink:0}
@@ -368,8 +377,8 @@
   /* add-to-cart sheet */
   .sheet-hero{display:flex;gap:12px;margin-bottom:14px}
   .sheet-hero img,.sheet-hero .ph{width:76px;height:76px;border-radius:11px;object-fit:cover;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--faint);flex-shrink:0}
-  .sheet-hero .nm{font-weight:700;font-size:15px}
-  .sheet-hero .pr{font-family:var(--ff-mono);font-weight:600;margin-top:3px}
+  .sheet-hero .nm{font-weight:700;font-size:20px}
+  .sheet-hero .pr{font-family:var(--ff-mono);font-weight:600;margin-top:3px;font-size:18px}
   .sheet-hero .st{font-size:12px;color:var(--muted);margin-top:3px}
   .sel-group{margin-bottom:12px}
   .sel-group>label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
@@ -399,17 +408,16 @@
   .stall__title{font-size:17px}
   .stall .tab{font-size:15.5px}
   .stall .section-head h2{font-size:18px}
-  .stall .item__name{font-size:23px;font-weight:750;line-height:1.25;white-space:normal}
+  .stall .item__name{font-size:20px;font-weight:750;line-height:1.25;white-space:normal}
   .stall .item__sub{font-size:13.5px;margin-top:4px}
-  .stall .item__price{font-size:16px;margin-top:6px}
+  .stall .item__price{font-size:19px;margin-top:6px}
   .stall .vlines div{font-size:13.5px}
   .stall .chip{font-size:12.5px;padding:3px 9px}
-  .stall .tile__nm{font-size:15px}
+  .stall .tile__nm{font-size:20px}
   .stall .tile__meta{font-size:12.5px}
-  .stall .co-row__info .nm,.stall .sheet-hero .nm{font-size:16px}
   .stall .cart-line__nm{font-size:15.5px}
   .stall .cart-line__d{font-size:12.5px}
-  .stall .cart-line__sub{font-size:15px;min-width:66px}
+  .stall .cart-line__sub{font-size:17px;min-width:66px}
   .stall .stat__nm{font-size:14px}
   .stall .order__line{font-size:13.5px}
 
@@ -496,6 +504,7 @@ const THEMES = [
   {name:'藍紫',hex:'#4f46e5'},{name:'紫羅蘭',hex:'#7c3aed'},{name:'梅紅',hex:'#a21caf'},
   {name:'玫瑰',hex:'#e11d48'},{name:'磚紅',hex:'#dc2626'},{name:'焦橙',hex:'#c2410c'},
   {name:'琥珀',hex:'#b45309'},{name:'金黃',hex:'#cb9228'},{name:'橄欖',hex:'#4d7c0f'},{name:'石墨',hex:'#475569'},
+  {name:'螢光綠',hex:'#7dff00'},
 ];
 
 const STORE_KEY = 'stall-register-v2';
@@ -664,6 +673,9 @@ function resolvePv(st,pvId){
   return {product:null,variant:null};
 }
 const pvStock = (st,pvId)=>{ const {product:p,variant:v}=resolvePv(st,pvId); return p?(v?v.stock:p.stock):0; };
+const pvReserved = (st,pvId)=>{ const {product:p,variant:v}=resolvePv(st,pvId); const t=v||p; return t?(t.reserved||0):0; };
+/* sellable stock for one unit: allowReserved=true also allows dipping into the reserved pool */
+const pvAvail = (st,pvId,allowReserved)=>{ const s=pvStock(st,pvId); return allowReserved?s:Math.max(0,s-pvReserved(st,pvId)); };
 
 /* stock consumed by the current cart (per pvId) */
 function pvConsumed(st,pvId,exceptLineUid){
@@ -684,7 +696,7 @@ function pvConsumed(st,pvId,exceptLineUid){
   });
   return c;
 }
-const pvRemaining = (st,pvId,exceptLineUid)=>pvStock(st,pvId)-pvConsumed(st,pvId,exceptLineUid);
+const pvRemaining = (st,pvId,exceptLineUid,allowReserved)=>pvAvail(st,pvId,allowReserved)-pvConsumed(st,pvId,exceptLineUid);
 
 /* bundle component meta at render time */
 function bundleComps(st,b){
@@ -902,17 +914,18 @@ function renderStall(){
 
 /* ---------------- PRODUCTS ---------------- */
 function totalStock(p){ return hasSpec(p)?p.variants.reduce((a,v)=>a+v.stock,0):p.stock; }
+function totalReserved(p){ return hasSpec(p)?p.variants.reduce((a,v)=>a+(v.reserved||0),0):(p.reserved||0); }
 function stockChip(n){ return n<=0?`<span class="chip chip--out">售罄</span>`:n<=3?`<span class="chip chip--low">剩 ${n}</span>`:`<span class="chip">庫存 ${n}</span>`; }
 function renderProducts(st,body){
   const prod=st.products.map(p=>{
-    const ss=totalStock(p);
+    const ss=totalStock(p), rsv=totalReserved(p);
     return `<div class="item">
       ${p.image?`<img class="thumb" src="${p.image}" alt="">`:`<div class="thumb">🏷️</div>`}
       <div class="item__body">
         <div class="item__name">${esc(p.name)} ${productLocked(p)?'<span class="chip">已售出</span>':''}</div>
-        <div class="item__sub">${hasSpec(p)?esc(p.specs.map(s=>s.name).join(' · ')):'單一品項'} ${stockChip(ss)}</div>
+        <div class="item__sub">${hasSpec(p)?esc(p.specs.map(s=>s.name).join(' · ')):'單一品項'} ${stockChip(ss)}${rsv>0?`<span class="chip chip--low">預留 ${rsv}</span>`:''}</div>
         <div class="item__price money">${money(p.price)}</div>
-        ${hasSpec(p)?`<div class="vlines">${p.variants.map(v=>`<div><span>${esc(v.key)}</span><span class="mono">${v.stock}</span></div>`).join('')}</div>`:''}
+        ${hasSpec(p)?`<div class="vlines">${p.variants.map(v=>`<div><span>${esc(v.key)}</span><span class="mono">${v.stock}${v.reserved?` <span style="color:var(--warn)">(留${v.reserved})</span>`:''}</span></div>`).join('')}</div>`:''}
       </div>
       <div class="item__actions">
         <button class="btn btn--ghost btn--sm" data-act="edit-product" data-id="${p.id}">修改</button>
@@ -925,7 +938,7 @@ function renderProducts(st,body){
     const contents=comps.map(c=>(c.missing?'(已刪除)':c.product.name)+'×'+c.qty).join('、');
     const orig=comps.reduce((a,c)=>a+(c.product?c.product.price*c.qty:0),0);
     return `<div class="item">
-      <div class="thumb">🎁</div>
+      ${b.image?`<img class="thumb" src="${b.image}" alt="">`:`<div class="thumb">🎁</div>`}
       <div class="item__body">
         <div class="item__name">${esc(b.name)} ${bundleLocked(b)?'<span class="chip">已售出</span>':''}</div>
         <div class="item__sub">${esc(contents||'尚未選擇商品')}</div>
@@ -952,11 +965,14 @@ function renderCheckout(st,body){
   if(UI.stage==='confirm'){ renderConfirm(st,body); return; }
 
   const tiles=st.products.map(p=>{
-    const rem=hasSpec(p)?p.variants.reduce((a,v)=>a+pvRemaining(st,v.id),0):pvRemaining(st,p.id);
-    const out=rem<=0;
+    const remNo=hasSpec(p)?p.variants.reduce((a,v)=>a+pvRemaining(st,v.id,null,false),0):pvRemaining(st,p.id,null,false);
+    const remAll=hasSpec(p)?p.variants.reduce((a,v)=>a+pvRemaining(st,v.id,null,true),0):pvRemaining(st,p.id,null,true);
+    const out=remAll<=0;
+    const reserveOnly=!out&&remNo<=0;
+    const badge=out?'售罄':reserveOnly?`僅預留 ${remAll}`:`庫存 ${remNo}`;
     return `<button class="tile ${out?'is-out':''}" data-act="pick-product" data-id="${p.id}">
       ${p.image?`<img class="tile__img" src="${p.image}" alt="">`:`<span class="tile__ph">🏷️</span>`}
-      <span class="tile__badge ${out?'out':rem<=3?'low':''}">${out?'售罄':'庫存 '+rem}</span>
+      <span class="tile__badge ${out?'out':(reserveOnly||remNo<=3)?'low':''}">${badge}</span>
       <span class="tile__cap"><span class="tile__nm">${esc(p.name)}</span>
         <span class="tile__meta"><span class="mo">${money(p.price)}</span>${hasSpec(p)?'<span>可選規格</span>':''}</span></span>
     </button>`;}).join('');
@@ -967,7 +983,7 @@ function renderCheckout(st,body){
     const specNeeded=comps.some(c=>c.needsSpec);
     const out=comps.some(c=>c.missing) || (!specNeeded && mx<=0);
     return `<button class="tile ${out?'is-out':''}" data-act="pick-bundle" data-id="${b.id}">
-      <span class="tile__ph">🎁</span>
+      ${b.image?`<img class="tile__img" src="${b.image}" alt="">`:`<span class="tile__ph">🎁</span>`}
       <span class="tile__badge ${out?'out':''}">${comps.some(c=>c.missing)?'商品不足':specNeeded?'選規格':(mx<=0?'售罄':'可組 '+mx)}</span>
       <span class="tile__cap"><span class="tile__nm">${esc(b.name)}</span>
         <span class="tile__meta"><span class="mo">${money(b.price)}</span></span></span>
@@ -990,12 +1006,13 @@ function renderCheckout(st,body){
 }
 function cartLineRow(st,l){
   const r=resolveLine(st,l);
-  const canInc = l.kind==='product' ? pvRemaining(st,l.pvId,l.uid) >= l.qty+1
+  const canInc = l.kind==='product' ? pvRemaining(st,l.pvId,l.uid,l.useReserved) >= l.qty+1
                                     : bundleMaxBuild(st,bundle(st,l.bundleId),l.picks,l.uid) >= l.qty+1;
+  const detailText=[r.detail, l.useReserved?'含預留':''].filter(Boolean).join(' · ');
   return `<div class="cart-line ${r.ok?'':'bad'}">
     <div class="cart-line__b">
       <div class="cart-line__nm">${esc(r.name)}</div>
-      ${r.detail?`<div class="cart-line__d">${esc(r.detail)}</div>`:''}
+      ${detailText?`<div class="cart-line__d">${esc(detailText)}</div>`:''}
     </div>
     <div class="stepper">
       <button data-act="line-dec" data-uid="${l.uid}" aria-label="減少">−</button>
@@ -1031,17 +1048,19 @@ function renderSettle(st,body){
       return {p,spec,name:p.name,
         cur:p.variants.reduce((a,v)=>a+v.stock,0),
         ini:p.variants.reduce((a,v)=>a+v.initialStock,0),
+        reserved:p.variants.reduce((a,v)=>a+(v.reserved||0),0),
         sold:p.variants.reduce((a,v)=>a+(v.sold||0),0)};
     }
-    return {p,spec,name:p.name,cur:p.stock,ini:p.initialStock,sold:p.sold||0};
+    return {p,spec,name:p.name,cur:p.stock,ini:p.initialStock,reserved:p.reserved||0,sold:p.sold||0};
   });
 
   const tiles=per.map(d=>{
     const pct=d.ini>0?Math.max(0,Math.min(100,d.cur/d.ini*100)):0;
+    const resPct=d.reserved>0&&d.ini>0?Math.max(0,Math.min(100,d.reserved/d.ini*100)):0;
     return `<div class="stat ${d.cur<=0?'is-out':''} ${d.spec?'stat--tap':''}" ${d.spec?`role="button" tabindex="0" data-act="stock-detail" data-id="${d.p.id}"`:''}>
       <div class="stat__nm">${esc(d.name)}${d.spec?' <span class="chip" style="font-size:10px">點看規格</span>':''}</div>
       <div class="stat__big"><span class="cur">${d.cur}</span><span class="sep">/</span><span class="ini">${d.ini}</span></div>
-      <div class="stat__bar"><i style="width:${pct}%"></i></div>
+      <div class="stat__bar"><i style="width:${pct}%"></i>${d.reserved>0?`<span class="stat__resmark" style="left:${resPct}%"></span>`:''}</div>
     </div>`;}).join('');
 
   const orders=st.orders.slice().sort((a,b)=>b.time-a.time);
@@ -1129,10 +1148,12 @@ function openIncomeDetail(st){
 function openStockPopup(p){
   const rows=p.variants.map(v=>{
     const pct=v.initialStock>0?Math.max(0,Math.min(100,v.stock/v.initialStock*100)):0;
+    const resv=v.reserved||0;
+    const resPct=resv>0&&v.initialStock>0?Math.max(0,Math.min(100,resv/v.initialStock*100)):0;
     return `<div class="stat ${v.stock<=0?'is-out':''}" style="margin-bottom:10px">
       <div class="stat__nm">${esc(v.key)}</div>
       <div class="stat__big"><span class="cur">${v.stock}</span><span class="sep">/</span><span class="ini">${v.initialStock}</span></div>
-      <div class="stat__bar"><i style="width:${pct}%"></i></div>
+      <div class="stat__bar"><i style="width:${pct}%"></i>${resv>0?`<span class="stat__resmark" style="left:${resPct}%"></span>`:''}</div>
     </div>`;}).join('');
   const ov=document.createElement('div'); ov.className='pop-dim';
   ov.innerHTML=`<div class="pop-card">
@@ -1235,7 +1256,7 @@ app.addEventListener('click',async e=>{
   if(act==='line-inc'||act==='line-dec'){
     const l=UI.cart.find(x=>x.uid===t.dataset.uid); if(!l) return;
     if(act==='line-inc'){
-      const ok = l.kind==='product' ? pvRemaining(st,l.pvId,l.uid)>=l.qty+1
+      const ok = l.kind==='product' ? pvRemaining(st,l.pvId,l.uid,l.useReserved)>=l.qty+1
                                     : bundleMaxBuild(st,bundle(st,l.bundleId),l.picks,l.uid)>=l.qty+1;
       if(ok) l.qty++;
     }else{ l.qty--; if(l.qty<=0) UI.cart=UI.cart.filter(x=>x.uid!==l.uid); }
@@ -1347,7 +1368,7 @@ function openStallModal(existing){
 function openProductModal(st,existing){
   const locked = existing && productLocked(existing);
   const draft = existing ? JSON.parse(JSON.stringify(existing))
-    : {id:uid(),name:'',image:'',price:0,specs:[],stock:0,initialStock:0,sold:0,variants:[]};
+    : {id:uid(),name:'',image:'',price:0,specs:[],stock:0,initialStock:0,reserved:0,sold:0,variants:[]};
   draft.specs=draft.specs||[]; draft.variants=draft.variants||[];
 
   function buildVariants(){
@@ -1360,16 +1381,16 @@ function openProductModal(st,existing){
     draft.variants=combos.map(combo=>{
       const key=draft.specs.map(s=>combo[s.id]).join(' / ');
       const ex=draft.variants.find(v=>v.key===key);
-      return ex?{...ex,combo,key}:{id:uid(),key,combo,stock:0,initialStock:0,sold:0,img:''};
+      return ex?{...ex,combo,key}:{id:uid(),key,combo,stock:0,initialStock:0,reserved:0,sold:0,img:''};
     });
   }
   function bodyHtml(){
     const d=locked?'disabled':'';
     const specRows=draft.specs.map((s,i)=>`
       <div class="spec-row" data-si="${i}">
-        <div class="field k"><input type="text" data-sf="name" value="${esc(s.name)}" placeholder="規格名" ${d}></div>
-        <div class="field v"><input type="text" data-sf="options" value="${esc((s.options||[]).join(', '))}" placeholder="選項，逗號分隔" ${d}></div>
-        ${locked?'':`<button class="btn btn--danger btn--sm" data-sdel="${i}" aria-label="刪除">✕</button>`}
+        <div class="field k"><label>規格名</label><input type="text" data-sf="name" value="${esc(s.name)}" placeholder="ex:尺寸" ${d}></div>
+        <div class="field v"><label>選項</label><input type="text" data-sf="options" value="${esc((s.options||[]).join(', '))}" placeholder="ex:S,M,L" ${d}></div>
+        ${locked?'':`<button class="btn btn--danger btn--sm spec-row__del" data-sdel="${i}" aria-label="刪除">✕</button>`}
       </div>`).join('');
 
     let stockBlock;
@@ -1377,13 +1398,16 @@ function openProductModal(st,existing){
       buildVariants();
       stockBlock=`<div class="field"><label>各規格庫存</label>
         <div class="vtable">
-          <div class="vrow"><span class="vn hh">規格</span><span class="hh w">現有</span><span class="hh w">初始</span></div>
+          <div class="vrow"><span class="vn hh">規格</span><span class="hh w">現有</span><span class="hh w">初始</span><span class="hh w">預留</span></div>
           ${draft.variants.map(v=>`<div class="vrow" data-vid="${v.id}">
             <span class="vn">${esc(v.key)}</span>
             <input type="number" min="0" data-vf="stock" value="${v.stock}">
             <input type="number" min="0" data-vf="initialStock" value="${v.initialStock}" ${locked?'disabled':''}>
+            <input type="number" min="0" data-vf="reserved" value="${v.reserved||0}">
           </div>`).join('')}
-        </div></div>
+        </div>
+        <div class="hint">預留的數量算在庫存內；收銀時預設不會賣到預留的量，需在加入購物車時特別勾選才能動用。</div>
+        </div>
         <div class="field"><label>各規格圖片（選填）</label><div class="vimg-list">
           ${draft.variants.map(v=>`<div class="vimg">
             ${v.img?`<img src="${v.img}" alt="">`:`<span class="ph">🏷️</span>`}
@@ -1395,7 +1419,9 @@ function openProductModal(st,existing){
       stockBlock=`<div class="field-row">
         <div class="field"><label>庫存（現有）</label><input type="number" min="0" id="pstock" value="${draft.stock}"></div>
         <div class="field"><label>初始庫存</label><input type="number" min="0" id="pinit" value="${draft.initialStock}" ${d}></div>
-      </div>`;
+      </div>
+      <div class="field"><label>預留（選填）</label><input type="number" min="0" id="preserve" value="${draft.reserved||0}"></div>
+      <div class="hint">預留的數量算在庫存內；收銀時預設不會賣到預留的量，需在加入購物車時特別勾選才能動用。</div>`;
     }
     return `${locked?`<div class="lock-note">此商品已有交易紀錄，僅能調整價格、庫存與圖片；品名與規格已鎖定，以保護既有訂單。</div>`:''}
       <div class="field"><label>品名</label><input type="text" id="pname" value="${esc(draft.name)}" placeholder="商品名稱" maxlength="40" ${d}></div>
@@ -1427,10 +1453,12 @@ function openProductModal(st,existing){
         const v=draft.variants.find(x=>x.id===r.dataset.vid); if(!v) return;
         v.stock=Math.max(0,parseInt($('[data-vf="stock"]',r).value)||0);
         const ii=$('[data-vf="initialStock"]',r); if(ii) v.initialStock=Math.max(0,parseInt(ii.value)||0);
+        const rr=$('[data-vf="reserved"]',r); v.reserved=rr?Math.max(0,parseInt(rr.value)||0):0;
       });
     }else{
       draft.stock=Math.max(0,parseInt($('#pstock',modal).value)||0);
       const pi=$('#pinit',modal); if(pi) draft.initialStock=Math.max(0,parseInt(pi.value)||0);
+      const pr=$('#preserve',modal); draft.reserved=pr?Math.max(0,parseInt(pr.value)||0):0;
     }
   }
   function rebuild(){ collect(); $('.m-body',modal).innerHTML=bodyHtml(); wire(false); }
@@ -1466,7 +1494,7 @@ function openProductModal(st,existing){
     if(existing && (productLocked(existing) || st.orders.some(o=>o.lines.some(l=>l.productId===existing.id||(l.productIds&&l.productIds.includes(existing.id)))))){
       if(!await confirmDialog('此商品已有交易紀錄。修改不會影響既有訂單，確定儲存變更？','確定儲存','primary')) return;
     }
-    if(draft.specs.length){ delete draft.stock; delete draft.initialStock; delete draft.sold; }
+    if(draft.specs.length){ delete draft.stock; delete draft.initialStock; delete draft.reserved; delete draft.sold; }
     else draft.variants=[];
     const arr=st.products, idx=arr.findIndex(p=>p.id===draft.id);
     if(idx>=0) arr[idx]=draft; else arr.push(draft);
@@ -1477,10 +1505,16 @@ function openProductModal(st,existing){
 /* ----- bundle create / edit ----- */
 function openBundleModal(st,existing){
   const locked = existing && bundleLocked(existing);
-  const draft = existing ? JSON.parse(JSON.stringify(existing)) : {id:uid(),name:'',price:0,components:[]};
+  const draft = existing ? JSON.parse(JSON.stringify(existing)) : {id:uid(),name:'',price:0,image:'',components:[]};
   const qmap={}; draft.components.forEach(c=>qmap[c.productId]=c.qty);
   function bodyHtml(){
     return `${locked?`<div class="lock-note">此套組已有交易紀錄，僅能調整售價；組成內容已鎖定。</div>`:''}
+      <div class="field"><label>套組封面圖（選填）</label>
+        <button type="button" class="img-drop" id="bimgBtn">
+          ${draft.image?`<img src="${draft.image}" alt="">`:`<span class="ph">🎁</span>`}
+          <span>${draft.image?'點擊更換圖片':'點擊選擇圖片'}</span>
+        </button>
+      </div>
       <div class="field"><label>套組名稱</label><input type="text" id="bname" value="${esc(draft.name)}" placeholder="例如：耳環＋貼紙優惠組" maxlength="40" ${locked?'disabled':''}></div>
       <div class="field"><label>套組售價</label><input type="number" min="0" step="0.01" id="bprice" value="${draft.price}"></div>
       <div class="field"><label>選擇組成商品與數量</label>
@@ -1503,10 +1537,15 @@ function openBundleModal(st,existing){
       });
     }
   }
+  function wire(){
+    const bimgBtn=$('#bimgBtn',modal);
+    if(bimgBtn) bimgBtn.onclick=()=>pickImage(dd=>{ collect(); draft.image=dd; $('.m-body',modal).innerHTML=bodyHtml(); wire(); });
+  }
   shell(existing?'修改套組':'新增套組',bodyHtml(),
     `<button class="btn" data-x2>取消</button><button class="btn btn--primary" id="bsave">儲存</button>`);
   $('[data-x2]',modal).onclick=closeModal;
   $('#bname',modal).focus();
+  wire();
   $('#bsave',modal).onclick=async()=>{
     collect();
     const err=$('#berr',modal);
@@ -1529,6 +1568,7 @@ function openAddSheet(st,kind,id){
   // selection state
   let sel = {};   // product: {specId:option}   bundle: {compIndex:variantId}
   let qty = 1;
+  let useReserved = false;   // products only: allow this add to dip into the reserved pool
   if(isP && hasSpec(p)) p.specs.forEach(s=>sel[s.id]=s.options[0]);
   if(!isP){
     bundleComps(st,b).forEach((c,i)=>{
@@ -1541,7 +1581,7 @@ function openAddSheet(st,kind,id){
     const v=variantByCombo(p,sel); return v?v.id:null;
   }
   function maxQty(){
-    if(isP){ const pv=resolvedPvP(); return pv?Math.max(0,pvRemaining(st,pv)):0; }
+    if(isP){ const pv=resolvedPvP(); return pv?Math.max(0,pvRemaining(st,pv,null,useReserved)):0; }
     return Math.max(0,bundleMaxBuild(st,b,sel));
   }
   function bodyHtml(){
@@ -1553,18 +1593,26 @@ function openAddSheet(st,kind,id){
       const pv=resolvedPvP();
       const v=hasSpec(p)?p.variants.find(x=>x.id===pv):null;
       const img=(v&&v.img)||p.image||'';
+      const resv=pv?pvReserved(st,pv):0;
+      const remNo=pv?Math.max(0,pvRemaining(st,pv,null,false)):0;
+      let stLine;
+      if(resv<=0) stLine = mq>0?`可加入 ${mq} 件`:'此規格庫存不足';
+      else if(useReserved) stLine = mq>0?`可加入 ${mq} 件（含預留）`:'庫存不足（含預留）';
+      else stLine = remNo>0?`可加入 ${mq} 件（一般庫存）`:`一般庫存已無，僅剩預留庫存`;
       hero=`<div class="sheet-hero">${img?`<img src="${img}" alt="">`:`<span class="ph">🏷️</span>`}
         <div><div class="nm">${esc(p.name)}</div><div class="pr money">${money(p.price)}</div>
-        <div class="st">${mq>0?`可加入 ${mq} 件`:'此規格庫存不足'}</div></div></div>`;
+        <div class="st">${stLine}</div></div></div>`;
       if(hasSpec(p)) groups=p.specs.map(s=>`<div class="sel-group"><label>${esc(s.name)}</label>
         <select data-sg="${s.id}">${s.options.map(o=>{
           const test={...sel,[s.id]:o}; const vv=variantByCombo(p,test);
-          const rem=vv?pvRemaining(st,vv.id):0;
+          const rem=vv?pvRemaining(st,vv.id,null,useReserved):0;
           return `<option value="${esc(o)}" ${sel[s.id]===o?'selected':''} ${rem<=0?'disabled':''}>${esc(o)}${rem<=0?'（售罄）':''}</option>`;
         }).join('')}</select></div>`).join('');
+      if(resv>0) groups += `<label class="reserve-toggle"><input type="checkbox" id="useResChk" ${useReserved?'checked':''}>
+        <span>使用預留庫存（尚有 ${resv} 件預留）</span></label>`;
     }else{
       const comps=bundleComps(st,b);
-      hero=`<div class="sheet-hero"><span class="ph">🎁</span>
+      hero=`<div class="sheet-hero">${b.image?`<img src="${b.image}" alt="">`:`<span class="ph">🎁</span>`}
         <div><div class="nm">${esc(b.name)}</div><div class="pr money">${money(b.price)}</div>
         <div class="st">${comps.map(c=>(c.missing?'(缺)':c.product.name)+'×'+c.qty).join('、')}</div>
         <div class="st">${mq>0?`可組 ${mq} 份`:'組成商品庫存不足'}</div></div></div>`;
@@ -1595,6 +1643,8 @@ function openAddSheet(st,kind,id){
       sel[i][j]=se.value; refresh();
     });
     $$('[data-q]',modal).forEach(bn=>bn.onclick=()=>{ qty=Math.max(0,qty+ +bn.dataset.q); refresh(); });
+    const rc=$('#useResChk',modal);
+    if(rc) rc.onchange=()=>{ useReserved=rc.checked; refresh(); };
   }
   function refresh(){ $('.m-body',modal).innerHTML=bodyHtml(); wire(); updateFoot(); }
   function updateFoot(){ const mq=maxQty(); $('#addBtn',modal).disabled = mq<=0 || qty<=0; }
@@ -1607,9 +1657,9 @@ function openAddSheet(st,kind,id){
     const mq=maxQty(); if(mq<=0||qty<=0) return;
     if(isP){
       const pv=resolvedPvP(); if(!pv) return;
-      const ex=UI.cart.find(l=>l.kind==='product'&&l.pvId===pv);
-      if(ex) ex.qty=Math.min(ex.qty+qty, ex.qty+pvRemaining(st,pv));
-      else UI.cart.push({uid:uid(),kind:'product',pvId:pv,qty});
+      const ex=UI.cart.find(l=>l.kind==='product'&&l.pvId===pv&&!!l.useReserved===useReserved);
+      if(ex) ex.qty=Math.min(ex.qty+qty, ex.qty+pvRemaining(st,pv,null,useReserved));
+      else UI.cart.push({uid:uid(),kind:'product',pvId:pv,qty,useReserved});
     }else{
       const picks={}; bundleComps(st,b).forEach((c,i)=>{ if(c.needsSpec) picks[i]=(sel[i]||[]).slice(); });
       const ex=UI.cart.find(l=>l.kind==='bundle'&&l.bundleId===b.id&&JSON.stringify(l.picks)===JSON.stringify(picks));
